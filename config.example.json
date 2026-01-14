@@ -1,0 +1,11 @@
+{
+  "site": {
+    "title": "RTFM",
+    "tagline": "Read The Friendly Manual",
+    "logo": "📚"
+  },
+  "links": {
+    "github": "",
+    "custom": []
+  }
+}

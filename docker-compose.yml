@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  rtfm:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DOCS_REPO=${DOCS_REPO}
+      - DOCS_BRANCH=${DOCS_BRANCH:-main}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+    volumes:
+      # Persist docs between container restarts
+      - docs-data:/app/docs
+      # Mount custom config (optional - create config.json to customize)
+      # Uncomment the line below after creating your config.json
+      # - ./config.json:/app/config.json:ro
+    restart: unless-stopped
+
+volumes:
+  docs-data:

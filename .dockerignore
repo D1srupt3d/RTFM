@@ -1,0 +1,11 @@
+node_modules
+docs
+.env
+.env.example
+config.json
+.git
+.gitignore
+*.md
+.DS_Store
+*.log
+Makefile

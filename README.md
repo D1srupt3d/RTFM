@@ -1,8 +1,23 @@
-# RTFM
+# Read the F***ing Manual
 
-Simple documentation server. Write docs in Markdown, auto-pulls from Git.
+Self-hosted documentation server for homelabs. Serves markdown files from Git with search, syntax highlighting, and a clean interface.
 
 ![RTFM Screenshot](screenshot.png)
+
+## Why This Exists
+
+Managing homelab documentation is a pain. MkDocs requires build steps and static site generation. Wiki platforms need databases and constant maintenance. I wanted something simpler: point it at a Git repo containing markdown files and get a searchable documentation site with zero configuration.
+
+## Features
+
+- **Git-backed** - Docs live in version control, restart container to pull latest changes
+- **14 Themes** - Dark, Light, Catppuccin, Nord, Dracula, Monokai, Solarized, and more
+- **Full-text Search** - Keyboard shortcut (Ctrl+K) to search across all documentation
+- **Syntax Highlighting** - Code blocks with copy buttons and language detection
+- **Auto-generated Navigation** - Sidebar builds from your folder structure
+- **Mobile Responsive** - Works on phones and tablets
+- **Private Repos** - Supports GitHub personal access tokens
+- **No Database** - Just markdown files and a Node.js server
 
 ## Setup
 
@@ -17,6 +32,7 @@ docker-compose up -d
 ## Config
 
 Edit `.env`:
+
 ```bash
 DOCS_REPO=https://github.com/user/docs.git
 DOCS_BRANCH=main
@@ -26,17 +42,33 @@ GITHUB_PAT=ghp_token  # for private repos
 
 ## Docs Structure
 
-```
-docs/
+```docs/
 ├── index.md
 ├── guides/
 │   └── example.md
 ```
 
 Restart container to pull updates:
+
 ```bash
 docker-compose restart
 ```
+
+## Use Cases
+
+- Server configuration and setup procedures
+- Troubleshooting runbooks and recovery guides
+- Infrastructure-as-code documentation (Ansible, Terraform, Docker stacks)
+- Network topology and firewall configurations
+- "How did I solve this last time?" reference docs
+
+## Technical Stack
+
+- **Backend**: Node.js 20+ with Express 5
+- **Frontend**: Vanilla JavaScript (no framework bloat)
+- **Markdown**: marked + gray-matter for frontmatter
+- **Syntax**: Highlight.js with 14 theme variants
+- **Container**: Single Docker image, minimal footprint
 
 ## Development
 
@@ -44,3 +76,30 @@ docker-compose restart
 npm install
 npm run dev
 ```
+
+## Roadmap
+
+Planned for v0.2.0:
+
+- Mermaid diagram support for infrastructure diagrams
+- Enhanced search with fuzzy matching
+- Document templates
+
+## Contributing
+
+PRs and issues welcome. Project is in active development (currently v0.1.0).
+
+## Credits
+
+Built by [@D1srupt3d](https://github.com/D1srupt3d) using [Cursor](https://cursor.sh)
+
+AI assistance (Claude) was used for:
+
+- Theme system (14 color schemes)
+- URL routing fixes (Express 5)
+- GitHub Actions workflows
+- Search feature
+
+## License
+
+MIT

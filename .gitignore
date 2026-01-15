@@ -1,8 +1,10 @@
 # Dependencies
 node_modules/
 
-# Local documentation
+# Local documentation (cloned from user's repo)
 docs/
+# But keep example docs
+!example-docs/
 
 # Environment variables (users should create their own)
 .env

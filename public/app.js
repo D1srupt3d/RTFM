@@ -617,6 +617,20 @@ function fixInternalLinks(currentPath) {
 function highlightCode() {
     document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
+        
+        // Add language badge
+        const pre = block.parentElement;
+        if (pre && !pre.querySelector('.language-badge')) {
+            const lang = block.className.match(/language-(\w+)/)?.[1] || 
+                        block.result?.language;
+            
+            if (lang && lang !== 'plaintext') {
+                const badge = document.createElement('div');
+                badge.className = 'language-badge';
+                badge.textContent = lang;
+                pre.appendChild(badge);
+            }
+        }
     });
 }
 

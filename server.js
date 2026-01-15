@@ -3,13 +3,44 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const { marked } = require('marked');
 const matter = require('gray-matter');
 const { glob } = require('glob');
 const { exec } = require('child_process');
 const util = require('util');
 
 const execPromise = util.promisify(exec);
+
+// Dynamic import for marked (ES module)
+let marked;
+(async () => {
+    const markedModule = await import('marked');
+    marked = markedModule.marked;
+    
+    // Configure marked with custom renderer for proper language classes
+    const renderer = new markedModule.marked.Renderer();
+    renderer.code = function(code, infostring) {
+        const lang = (infostring || '').match(/\S*/)[0];
+        const escapedCode = code
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        
+        if (lang) {
+            return `<pre><code class="language-${lang}">${escapedCode}</code></pre>`;
+        }
+        return `<pre><code>${escapedCode}</code></pre>`;
+    };
+    
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: true,
+        mangle: false,
+        renderer: renderer
+    });
+})();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -88,13 +119,6 @@ async function initDocsRepo() {
 }
 
 app.use(express.static('public', { maxAge: '1h' }));
-
-marked.setOptions({
-    breaks: true,
-    gfm: true,
-    headerIds: true,
-    mangle: false
-});
 
 async function getMarkdownFiles() {
     try {

@@ -1,12 +1,12 @@
 # Read the F***ing Manual
 
-Self-hosted documentation server for homelabs. Serves markdown files from Git with search, syntax highlighting, and a clean interface.
+Self-hosted documentation server. Serves markdown files from Git with search, syntax highlighting, and a clean interface.
 
 ![RTFM Screenshot](screenshot.png)
 
 ## Why This Exists
 
-Managing homelab documentation is a pain. MkDocs requires build steps and static site generation. Wiki platforms need databases and constant maintenance. I wanted something simpler: point it at a Git repo containing markdown files and get a searchable documentation site with zero configuration.
+Managing documentation shouldn't be complicated. MkDocs requires build steps and static site generation. Wiki platforms need databases and constant maintenance. I wanted something simpler: point it at a Git repo containing markdown files and get a searchable documentation site with zero configuration.
 
 ## Features
 
@@ -58,11 +58,12 @@ docker-compose restart
 
 ## Use Cases
 
+- Team documentation and knowledge bases
+- Project guides and API references
 - Server configuration and setup procedures
 - Troubleshooting runbooks and recovery guides
 - Infrastructure-as-code documentation (Ansible, Terraform, Docker stacks)
-- Network topology and firewall configurations
-- "How did I solve this last time?" reference docs
+- Personal notes and "how did I solve this last time?" references
 
 ## Technical Stack
 
@@ -89,7 +90,7 @@ Planned for v0.3.0+:
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.2.2).
+PRs and issues welcome. Project is in active development (currently v0.2.3).
 
 ## Example Documentation
 

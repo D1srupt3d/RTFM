@@ -1,6 +1,6 @@
 # Welcome to RTFM
 
-**Read The F\*\*\*ing Manual** - A self-hosted documentation server for homelabs.
+**Read The F\*\*\*ing Manual** - A self-hosted documentation server.
 
 ## Getting Started
 
@@ -75,7 +75,7 @@ console.log('Hello, RTFM!');
 
 ### Blockquotes
 
-> RTFM is designed for homelabs where you need quick access to your infrastructure documentation, server configs, and "how did I fix this last time?" notes.
+> RTFM is designed for anyone who needs quick access to their documentation, whether it's infrastructure notes, API references, project guides, or "how did I fix this last time?" notes.
 
 ### Links
 

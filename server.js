@@ -86,12 +86,22 @@ async function initDocsRepo() {
             console.log('📁 Docs directory exists, pulling latest changes...');
             const { stdout } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
             console.log('✅ Docs updated:', stdout.trim());
+            
+            // Show current commit
+            const { stdout: commitHash } = await execPromise(`cd ${DOCS_DIR} && git rev-parse --short HEAD`);
+            const { stdout: commitMsg } = await execPromise(`cd ${DOCS_DIR} && git log -1 --pretty=%B`);
+            console.log(`📌 Current commit: ${commitHash.trim()} - ${commitMsg.trim().split('\n')[0]}`);
         } else if (exists && !isEmpty) {
             throw new Error('Docs directory exists but is not a git repository. Please run: docker-compose down -v');
         } else {
             console.log(`📦 Cloning docs from ${repoDisplay}...`);
             const { stdout } = await execPromise(`git clone -b ${DOCS_BRANCH} ${authRepoUrl} ${DOCS_DIR}`);
             console.log('✅ Docs cloned successfully');
+            
+            // Show cloned commit
+            const { stdout: commitHash } = await execPromise(`cd ${DOCS_DIR} && git rev-parse --short HEAD`);
+            const { stdout: commitMsg } = await execPromise(`cd ${DOCS_DIR} && git log -1 --pretty=%B`);
+            console.log(`📌 Cloned commit: ${commitHash.trim()} - ${commitMsg.trim().split('\n')[0]}`);
         }
     } catch (error) {
         console.error('❌ Error initializing docs repository:', error.message);

@@ -203,7 +203,7 @@ async function loadDocument(path) {
         fixInternalLinks(path);
         addCopyButtons();
         makeCodeBlocksCollapsible();
-        generateTOC();
+        // generateTOC(); // TODO: Broken - layout conflicts with content on different screen sizes
         
         if (doc.lastModified) showLastModified(doc.lastModified);
         document.querySelector('.content').scrollTop = 0;

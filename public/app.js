@@ -215,6 +215,9 @@ async function loadDocument(path) {
         // Add copy buttons to code blocks
         addCopyButtons();
         
+        // Make long code blocks collapsible
+        makeCodeBlocksCollapsible();
+        
         // Generate table of contents
         generateTOC();
         
@@ -457,6 +460,61 @@ function addCopyButtons() {
         
         pre.style.position = 'relative';
         pre.appendChild(button);
+    });
+}
+
+// Make long code blocks collapsible
+function makeCodeBlocksCollapsible() {
+    document.querySelectorAll('pre').forEach(pre => {
+        // Skip if already collapsible
+        if (pre.querySelector('.code-toggle')) return;
+        
+        const code = pre.querySelector('code');
+        if (!code) return;
+        
+        // Count lines
+        const lines = code.textContent.split('\n');
+        const lineCount = lines.length;
+        
+        // Only make collapsible if >10 lines
+        if (lineCount <= 10) return;
+        
+        // Create toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'code-toggle';
+        toggleBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+            <span>Expand ${lineCount} lines</span>
+        `;
+        
+        // Initially collapse
+        pre.classList.add('collapsed');
+        
+        // Toggle functionality
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pre.classList.toggle('collapsed');
+            
+            if (pre.classList.contains('collapsed')) {
+                toggleBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <span>Expand ${lineCount} lines</span>
+                `;
+            } else {
+                toggleBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    <span>Collapse</span>
+                `;
+            }
+        });
+        
+        pre.appendChild(toggleBtn);
     });
 }
 

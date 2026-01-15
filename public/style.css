@@ -674,6 +674,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
 }
 
 .copy-button:hover {
@@ -685,6 +686,60 @@ body {
 .copy-button.copied {
     color: var(--color-success);
     border-color: var(--color-success);
+}
+
+/* Code Toggle Button */
+.code-toggle {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    z-index: 2;
+}
+
+.code-toggle:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.code-toggle svg {
+    flex-shrink: 0;
+}
+
+/* Collapsed Code Block */
+.doc-content pre.collapsed {
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 40px;
+}
+
+.doc-content pre.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--color-bg-secondary));
+    pointer-events: none;
+}
+
+.doc-content pre:not(.collapsed) {
+    transition: max-height var(--transition-base);
 }
 
 /* Table of Contents - Floating Sidebar */

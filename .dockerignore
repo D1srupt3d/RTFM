@@ -1,0 +1,43 @@
+# Dependencies (installed during build)
+node_modules
+
+# Documentation repo (cloned at runtime)
+docs
+
+# Git
+.git
+.gitignore
+.github
+.git-hooks
+
+# Environment files
+.env
+.env.*
+
+# Config overrides
+config.local.js
+
+# Documentation files (not needed in container)
+*.md
+README.md
+LICENSE
+
+# Build/Dev tools
+Makefile
+.dockerignore
+docker-compose.yml
+Dockerfile
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo

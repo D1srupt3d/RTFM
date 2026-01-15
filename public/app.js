@@ -1,10 +1,8 @@
-// State
 let navData = [];
 let currentDoc = null;
 let searchTimeout = null;
 let config = {};
 
-// Initialize app
 async function init() {
     try {
         await loadConfig();
@@ -12,18 +10,11 @@ async function init() {
         setupEventListeners();
         loadSyntaxTheme();
         
-        // Load initial doc from URL path, index, or first doc
-        let path = window.location.pathname.slice(1); // Remove leading slash
-        
-        // If path is empty or just '/', load index
-        if (!path || path === '' || path === '/') {
-            path = 'index';
-        }
-        
+        let path = window.location.pathname.slice(1);
+        if (!path || path === '' || path === '/') path = 'index';
         loadDocument(path);
     } catch (error) {
-        console.error('Failed to initialize app:', error);
-        // Show error to user
+        console.error('Init failed:', error);
         document.getElementById('doc-content').innerHTML = `
             <div class="error-404">
                 <div class="error-icon">⚠️</div>
@@ -35,7 +26,6 @@ async function init() {
     }
 }
 
-// Load configuration
 async function loadConfig() {
     try {
         const response = await fetch('/api/config');
@@ -50,18 +40,13 @@ async function loadConfig() {
     }
 }
 
-// Apply configuration to UI
 function applyConfig() {
-    // Apply site branding
     document.getElementById('site-title').textContent = config.site?.title || 'RTFM';
     document.getElementById('site-tagline').textContent = config.site?.tagline || 'Documentation';
     document.getElementById('logo-icon').textContent = config.site?.logo || '📚';
     document.title = config.site?.title || 'RTFM';
     
-    // Add custom links to footer
     const footer = document.getElementById('sidebar-footer');
-    
-    // Preserve the theme selector
     const themeSelector = footer.querySelector('.theme-selector');
     footer.innerHTML = '';
     if (themeSelector) {
@@ -99,11 +84,9 @@ function applyConfig() {
         }
     }
     
-    // Add commit info
     loadCommitInfo();
 }
 
-// Load and display latest commit info
 async function loadCommitInfo() {
     try {
         const response = await fetch('/api/commit');
@@ -122,7 +105,6 @@ async function loadCommitInfo() {
     }
 }
 
-// Find first document in nav tree
 function findFirstDocument(items) {
     for (const item of items) {
         if (item.type === 'file') {
@@ -136,7 +118,6 @@ function findFirstDocument(items) {
     return null;
 }
 
-// Load navigation tree
 async function loadNavigation() {
     try {
         const response = await fetch('/api/nav');
@@ -148,7 +129,6 @@ async function loadNavigation() {
     }
 }
 
-// Render navigation tree
 function renderNavigation(items, parentElement = null) {
     const container = parentElement || document.getElementById('nav-tree');
     
@@ -162,7 +142,7 @@ function renderNavigation(items, parentElement = null) {
             dirElement.className = 'nav-item dir';
             dirElement.textContent = item.title;
             dirElement.dataset.name = item.name;
-            dirElement.dataset.type = 'dir'; // Mark as directory
+            dirElement.dataset.type = 'dir';
             
             const childrenContainer = document.createElement('div');
             childrenContainer.className = 'nav-children';
@@ -170,7 +150,6 @@ function renderNavigation(items, parentElement = null) {
             dirElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Only toggle expand/collapse, don't navigate
                 dirElement.classList.toggle('expanded');
                 childrenContainer.classList.toggle('visible');
             });
@@ -196,15 +175,12 @@ function renderNavigation(items, parentElement = null) {
     });
 }
 
-// Load document
 async function loadDocument(path) {
     try {
         currentDoc = path;
-        // Update URL without hash using History API
         const url = path === 'index' ? '/' : `/${path}`;
         window.history.pushState({ path }, '', url);
         
-        // Update active state in nav
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
             if (item.dataset.path === path) {
@@ -213,10 +189,7 @@ async function loadDocument(path) {
             }
         });
         
-        // Update breadcrumbs
         updateBreadcrumbs(path);
-        
-        // Fetch document
         const response = await fetch(`/api/doc/${path}`);
         if (!response.ok) {
             throw new Error('Document not found');
@@ -226,38 +199,20 @@ async function loadDocument(path) {
         const contentElement = document.getElementById('doc-content');
         contentElement.innerHTML = doc.html;
         
-        // Highlight code blocks
         highlightCode();
-        
-        // Fix internal .md links
         fixInternalLinks(path);
-        
-        // Add copy buttons to code blocks
         addCopyButtons();
-        
-        // Make long code blocks collapsible
         makeCodeBlocksCollapsible();
-        
-        // Generate table of contents
         generateTOC();
         
-        // Show last modified time
-        if (doc.lastModified) {
-            showLastModified(doc.lastModified);
-        }
-        
-        // Scroll to top
+        if (doc.lastModified) showLastModified(doc.lastModified);
         document.querySelector('.content').scrollTop = 0;
-        
-        // Close mobile menu if open
         document.querySelector('.sidebar').classList.remove('mobile-open');
         
     } catch (error) {
-        console.error('Failed to load document:', error);
+        console.error('Failed to load:', error);
         
-        // If document not found, redirect to homepage
         if (error.message === 'Document not found') {
-            console.log('Document not found, redirecting to homepage...');
             window.history.pushState({ path: 'index' }, '', '/');
             loadDocument('index');
         } else {
@@ -279,11 +234,9 @@ async function loadDocument(path) {
     }
 }
 
-// Update breadcrumbs
 function updateBreadcrumbs(path) {
     const breadcrumbsElement = document.getElementById('breadcrumbs');
     
-    // Hide breadcrumbs on homepage
     if (path === 'index') {
         breadcrumbsElement.style.display = 'none';
         return;
@@ -312,7 +265,6 @@ function updateBreadcrumbs(path) {
     breadcrumbsElement.style.display = 'flex';
 }
 
-// Expand parent directories in nav
 function expandParents(element) {
     let parent = element.previousElementSibling;
     while (parent) {
@@ -327,7 +279,6 @@ function expandParents(element) {
     }
 }
 
-// Setup event listeners
 function setupEventListeners() {
     const searchInput = document.getElementById('search');
     const searchResults = document.getElementById('search-results');
@@ -335,7 +286,6 @@ function setupEventListeners() {
     const sidebar = document.querySelector('.sidebar');
     const themeSelector = document.getElementById('site-theme');
     
-    // Search
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         const query = e.target.value.trim();
@@ -348,19 +298,16 @@ function setupEventListeners() {
         searchTimeout = setTimeout(() => performSearch(query), 300);
     });
     
-    // Close search results when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.search-box')) {
             searchResults.classList.remove('active');
         }
     });
     
-    // Mobile menu toggle
     mobileMenuToggle.addEventListener('click', () => {
         sidebar.classList.toggle('mobile-open');
     });
     
-    // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
         if (sidebar.classList.contains('mobile-open') && 
             !e.target.closest('.sidebar') && 
@@ -369,7 +316,6 @@ function setupEventListeners() {
         }
     });
     
-    // Theme selector
     if (themeSelector) {
         themeSelector.addEventListener('change', (e) => {
             const theme = e.target.value;
@@ -377,7 +323,6 @@ function setupEventListeners() {
         });
     }
     
-    // Handle browser back/forward
     window.addEventListener('popstate', (e) => {
         const path = window.location.pathname.slice(1) || 'index';
         if (path !== currentDoc) {
@@ -385,15 +330,12 @@ function setupEventListeners() {
         }
     });
     
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + K to focus search
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             searchInput.focus();
         }
         
-        // Escape to close search or mobile menu
         if (e.key === 'Escape') {
             searchResults.classList.remove('active');
             searchInput.blur();
@@ -402,7 +344,6 @@ function setupEventListeners() {
     });
 }
 
-// Perform search
 async function performSearch(query) {
     try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
@@ -413,7 +354,6 @@ async function performSearch(query) {
     }
 }
 
-// Display search results
 function displaySearchResults(results) {
     const searchResults = document.getElementById('search-results');
     
@@ -432,7 +372,6 @@ function displaySearchResults(results) {
     
     searchResults.classList.add('active');
     
-    // Add click handlers
     searchResults.querySelectorAll('.search-result-item').forEach(item => {
         item.addEventListener('click', () => {
             loadDocument(item.dataset.path);
@@ -442,17 +381,14 @@ function displaySearchResults(results) {
     });
 }
 
-// Escape HTML
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Add copy buttons to code blocks
 function addCopyButtons() {
     document.querySelectorAll('pre').forEach(pre => {
-        // Skip if already has button
         if (pre.querySelector('.copy-button')) return;
         
         const button = document.createElement('button');
@@ -492,23 +428,17 @@ function addCopyButtons() {
     });
 }
 
-// Make long code blocks collapsible
 function makeCodeBlocksCollapsible() {
     document.querySelectorAll('pre').forEach(pre => {
-        // Skip if already collapsible
         if (pre.querySelector('.code-toggle')) return;
         
         const code = pre.querySelector('code');
         if (!code) return;
         
-        // Count lines
         const lines = code.textContent.split('\n');
         const lineCount = lines.length;
-        
-        // Only make collapsible if >10 lines
         if (lineCount <= 10) return;
         
-        // Create toggle button
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'code-toggle';
         toggleBtn.innerHTML = `
@@ -518,10 +448,8 @@ function makeCodeBlocksCollapsible() {
             <span>Expand ${lineCount} lines</span>
         `;
         
-        // Initially collapse
         pre.classList.add('collapsed');
         
-        // Toggle functionality
         toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             pre.classList.toggle('collapsed');
@@ -547,16 +475,12 @@ function makeCodeBlocksCollapsible() {
     });
 }
 
-// Generate table of contents
 function generateTOC() {
     const content = document.getElementById('doc-content');
     const headings = content.querySelectorAll('h2, h3');
     
-    // Remove existing TOC
     const existingTOC = document.querySelector('.toc-sidebar');
     if (existingTOC) existingTOC.remove();
-    
-    // Only generate if there are 6+ headings (for longer docs)
     if (headings.length < 6) return;
     
     const toc = document.createElement('div');
@@ -593,15 +517,10 @@ function generateTOC() {
     });
     
     toc.appendChild(tocList);
-    
-    // Insert TOC as floating sidebar on the right
     document.querySelector('.content').appendChild(toc);
-    
-    // Setup intersection observer for active highlighting
     setupTOCHighlighting(headings);
 }
 
-// Highlight active TOC item on scroll
 function setupTOCHighlighting(headings) {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -609,14 +528,8 @@ function setupTOCHighlighting(headings) {
             const tocLink = document.querySelector(`.toc-list a[data-target="${id}"]`);
             
             if (entry.isIntersecting) {
-                // Remove active from all
-                document.querySelectorAll('.toc-list a').forEach(link => {
-                    link.classList.remove('active');
-                });
-                // Add active to current
-                if (tocLink) {
-                    tocLink.classList.add('active');
-                }
+                document.querySelectorAll('.toc-list a').forEach(link => link.classList.remove('active'));
+                if (tocLink) tocLink.classList.add('active');
             }
         });
     }, {
@@ -629,11 +542,8 @@ function setupTOCHighlighting(headings) {
     });
 }
 
-// Show last modified time
 function showLastModified(time) {
     const content = document.getElementById('doc-content');
-    
-    // Remove existing timestamp
     const existing = content.querySelector('.last-modified');
     if (existing) existing.remove();
     
@@ -650,37 +560,23 @@ function showLastModified(time) {
     content.appendChild(timestamp);
 }
 
-// Fix internal links to work with hash-based routing
 function fixInternalLinks(currentPath) {
     const content = document.getElementById('doc-content');
     const links = content.querySelectorAll('a[href]');
     
     links.forEach(link => {
         const href = link.getAttribute('href');
-        
-        // Skip external links, anchors, and mailto links
-        if (!href || 
-            href.startsWith('http://') || 
-            href.startsWith('https://') || 
-            href.startsWith('#') ||
-            href.startsWith('mailto:')) {
+        if (!href || href.startsWith('http://') || href.startsWith('https://') || 
+            href.startsWith('#') || href.startsWith('mailto:')) {
             return;
         }
         
         let rtfmPath = href;
+        if (rtfmPath.endsWith('.md')) rtfmPath = rtfmPath.slice(0, -3);
         
-        // Remove .md extension if present
-        if (rtfmPath.endsWith('.md')) {
-            rtfmPath = rtfmPath.slice(0, -3);
-        }
-        
-        // Handle relative paths
         if (rtfmPath.startsWith('../') || rtfmPath.startsWith('./')) {
-            // Get the current directory
             const pathParts = currentPath.split('/');
-            pathParts.pop(); // Remove current file
-            
-            // Process relative path
+            pathParts.pop();
             const relativeParts = rtfmPath.split('/');
             relativeParts.forEach(part => {
                 if (part === '..') {
@@ -692,21 +588,17 @@ function fixInternalLinks(currentPath) {
             
             rtfmPath = pathParts.join('/');
         } else if (!rtfmPath.includes('/')) {
-            // Same directory link (no slashes)
             const pathParts = currentPath.split('/');
             if (pathParts.length > 0 && pathParts[0] !== 'index') {
-                pathParts.pop(); // Remove current file
+                pathParts.pop();
                 pathParts.push(rtfmPath);
                 rtfmPath = pathParts.join('/');
             }
         }
-        // else: Full path like "infrastructure/overview" - already correct
         
-        // Update link to use clean URL navigation
         const cleanUrl = rtfmPath === 'index' ? '/' : `/${rtfmPath}`;
         link.setAttribute('href', cleanUrl);
         
-        // Add click handler to prevent default and load document
         link.addEventListener('click', (e) => {
             e.preventDefault();
             loadDocument(rtfmPath);
@@ -714,7 +606,6 @@ function fixInternalLinks(currentPath) {
     });
 }
 
-// Syntax highlighting
 function highlightCode() {
     document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
@@ -731,10 +622,8 @@ function loadSyntaxTheme() {
 }
 
 function setSiteTheme(theme, save = true) {
-    // Set site theme via data attribute
     document.documentElement.setAttribute('data-theme', theme);
     
-    // Map site theme to syntax highlighting theme
     const syntaxThemeMap = {
         'dark': 'tokyo-night-dark',
         'light': 'github',
@@ -758,21 +647,13 @@ function setSiteTheme(theme, save = true) {
     const link = document.getElementById('highlight-theme');
     const newHref = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${syntaxTheme}.min.css`;
     
-    // Force CSS reload
     link.href = '';
     setTimeout(() => {
         link.href = newHref;
-        
-        // Re-highlight all code blocks
-        setTimeout(() => {
-            highlightCode();
-        }, 100);
+        setTimeout(() => highlightCode(), 100);
     }, 50);
     
-    if (save) {
-        localStorage.setItem('siteTheme', theme);
-    }
+    if (save) localStorage.setItem('siteTheme', theme);
 }
 
-// Start the app
 init();

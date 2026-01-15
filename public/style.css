@@ -1068,8 +1068,8 @@ body {
     opacity: 1;
 }
 
-/* Hide TOC on smaller screens */
-@media (max-width: 1400px) {
+/* Hide TOC on smaller screens or when zoomed */
+@media (max-width: 1600px) {
     .toc-sidebar {
         display: none;
     }

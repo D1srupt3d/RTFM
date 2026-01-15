@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:24-alpine
 
 # Install git for cloning docs repo
 RUN apk add --no-cache git openssh-client
@@ -13,8 +13,8 @@ RUN npm ci --only=production
 
 # Copy application files
 COPY server.js ./
+COPY config.js ./
 COPY public ./public
-COPY config.example.json ./
 
 # Create docs directory
 RUN mkdir -p docs

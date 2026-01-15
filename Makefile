@@ -29,13 +29,13 @@ restart: ## Restart containers
 logs: ## Show container logs
 	docker-compose logs -f
 
-config: ## Create config.json from example
-	@if [ -f config.json ]; then \
-		echo "config.json already exists!"; \
+config: ## Copy config.js template
+	@if [ -f config.local.js ]; then \
+		echo "config.local.js already exists!"; \
 	else \
-		cp config.example.json config.json; \
-		echo "Created config.json - edit it to customize"; \
-		echo "Then uncomment the volume mount in docker-compose.yml"; \
+		cp config.js config.local.js; \
+		echo "Created config.local.js - edit it to customize"; \
+		echo "Then mount it in docker-compose.yml"; \
 	fi
 
 clean: ## Clean up generated files

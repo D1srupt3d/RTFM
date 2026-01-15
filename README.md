@@ -1,113 +1,94 @@
-# RTFM - Read The F*** Manual
+# RTFM - Read The F***ing Manual
 
-A dead-simple documentation server for your homelab. Write docs in Markdown, push to GitHub, auto-update with webhooks. That's it.
-
-## Why RTFM?
-
-Because you hate mkdocs/bookstack/and others. This is just:
-- **Node.js + Express + Markdown**
-- No build steps, no complexity
-- Beautiful purple dark theme
-- Auto-updates from GitHub
+A dead-simple documentation server for your homelab. Write docs in Markdown, push to GitHub, auto-pulls on startup.
 
 ## Features
 
-- ✅ **Pure Markdown** - No special syntax or templating
-- ✅ **Auto-Updates** - GitHub webhooks pull latest changes automatically
-- ✅ **Fast Search** - Full-text search across all docs
-- ✅ **Beautiful UI** - Modern purple dark theme with smooth animations
-- ✅ **Simple Config** - Just set your title/logo, we handle the rest
-- ✅ **Docker Ready** - One command deployment
-- ✅ **Separate Repos** - Keep docs in their own repository
-- ✅ **Mobile Friendly** - Works perfectly on phones and tablets
-- ✅ **Keyboard Shortcuts** - Ctrl+K for search, ESC to close
+- 📝 **Pure Markdown** - No special syntax or templating
+- 🔄 **Git Integration** - Auto-pulls from repository on startup
+- 🔍 **Fast Search** - Full-text search across all docs
+- 🎨 **Beautiful UI** - Modern purple dark theme
+- 🐳 **Docker Ready** - One command deployment
+- 📱 **Mobile Friendly** - Works on all devices
+- ⌨️ **Keyboard Shortcuts** - Ctrl+K for search, ESC to close
 
 ## Quick Start
-
-### 1. Create Your Docs Repo
-
-Create a separate GitHub repository for your documentation:
-
-```bash
-mkdir my-docs
-cd my-docs
-git init
-echo "# Welcome to My Docs" > index.md
-git add .
-git commit -m "Initial docs"
-git remote add origin https://github.com/yourusername/my-docs.git
-git push -u origin main
-```
-
-### 2. Run RTFM with Docker
 
 ```bash
 # Clone RTFM
 git clone https://github.com/d1srupt3d/rtfm.git
 cd rtfm
 
-# Set your docs repo
-export DOCS_REPO=https://github.com/yourusername/my-docs.git
-export WEBHOOK_SECRET=$(openssl rand -hex 32)
+# Create .env file from template
+cp env.template .env
+
+# Edit .env - set your docs repository URL and webhook secret
+nano .env
 
 # Start
 docker-compose up -d
 ```
 
-Visit `http://localhost:3000` 🎉
-
-### 3. Set Up Auto-Updates (Optional)
-
-Configure a GitHub webhook in your **docs repository**:
-
-- **Payload URL:** `https://your-domain.com/webhook/github`
-- **Content type:** `application/json`
-- **Secret:** Use the same value as `WEBHOOK_SECRET` in your `.env`
-- **Events:** Just the push event
-
-Now every time you push to your docs repo, RTFM auto-updates!
+Visit `http://localhost:3000`
 
 ## Configuration
 
-### Environment Variables
+### Required (.env)
 
-Required:
 ```bash
+# Your documentation repository
 DOCS_REPO=https://github.com/yourusername/my-docs.git
-WEBHOOK_SECRET=$(openssl rand -hex 32)
 ```
 
-Optional:
-```bash
-DOCS_BRANCH=main  # default
-PORT=3000         # default
-```
-
-### Customize Branding (Optional)
+### Optional (.env)
 
 ```bash
-cp config.example.json config.json
-vim config.json
+# Repository branch
+DOCS_BRANCH=main
+
+# Server port
+PORT=3000
+
+# GitHub PAT for private repos (leave empty for public)
+GITHUB_PAT=ghp_yourtoken
+
+# Site branding
+SITE_TITLE=RTFM
+SITE_TAGLINE=Documentation
+SITE_LOGO=📚
+GITHUB_LINK=https://github.com/yourusername/repo
 ```
 
-Then mount it in `docker-compose.yml`:
+### Advanced Branding (config.js)
+
+For custom footer links, copy `config.js` locally and edit:
+
+```javascript
+module.exports = {
+  site: {
+    title: 'My Docs',
+    tagline: 'Documentation',
+    logo: '🏠'
+  },
+  links: {
+    github: 'https://github.com/username/repo',
+    custom: [
+      { title: 'Grafana', url: 'https://grafana.local', external: true }
+    ]
+  }
+};
+```
+
+Then uncomment in `docker-compose.yml`:
 ```yaml
-volumes:
-  - ./config.json:/app/config.json:ro
+- ./config.js:/app/config.js:ro
 ```
 
-### Customize Colors
-
-Edit `public/style.css` and change the CSS variables:
-```css
-:root {
-    --color-primary: #a78bfa;      /* Your accent color */
-    --color-bg-primary: #0a0a0f;   /* Background */
-}
+**Note:** Environment variables override config.js
 
 ## Documentation Structure
 
-Your docs repo can have any structure:
+RTFM recursively finds all `.md` files in your repository:
 
 ```
 my-docs/
@@ -115,150 +96,109 @@ my-docs/
 ├── getting-started/
 │   ├── quickstart.md
 │   └── installation.md
-├── guides/
-│   ├── docker.md
-│   └── networking.md
-└── api/
-    └── reference.md
+└── guides/
+    └── docker.md
 ```
 
-- Folders become navigation sections
-- Files are sorted alphabetically
+- **Folders** become navigation sections
+- **Files** are sorted alphabetically
 - Use lowercase with hyphens: `my-guide.md`
 
 ### Frontmatter (Optional)
 
-Add custom titles with frontmatter:
+Override auto-generated titles:
 
 ```markdown
 ---
 title: My Custom Title
 ---
 
-# My Custom Title
-
-Content here...
+# Content here
 ```
 
-## Development
+## Updating Documentation
+
+RTFM automatically clones/pulls your docs repository on startup.
+
+To update docs after pushing changes to your repository:
 
 ```bash
-# Install dependencies
-npm install
+# Restart the container to pull latest changes
+docker-compose restart
 
-# Set environment variables
-export DOCS_REPO=https://github.com/yourusername/my-docs.git
-export WEBHOOK_SECRET=dev-secret
-
-# Run dev server with auto-restart
-npm run dev
+# Or if running locally
+npm start
 ```
+
+The server will automatically pull the latest changes from your `DOCS_REPO` on startup.
 
 ## Deployment
 
-### Docker Compose (Recommended)
+### Using Pre-Built Image
 
 ```yaml
-version: '3.8'
-
 services:
   rtfm:
-    image: ghcr.io/yourusername/rtfm:latest
+    image: ghcr.io/d1srupt3d/rtfm:latest
     ports:
       - "3000:3000"
-    environment:
-      - DOCS_REPO=https://github.com/yourusername/my-docs.git
-      - WEBHOOK_SECRET=your-secret
+    env_file:
+      - .env
     volumes:
       - docs-data:/app/docs
-      # Optional: mount custom config for branding
-      - ./config.json:/app/config.json:ro
     restart: unless-stopped
 
 volumes:
   docs-data:
 ```
 
-### With Reverse Proxy (Caddy)
+### With Reverse Proxy
 
+**Caddy:**
 ```caddyfile
 docs.yourdomain.com {
     reverse_proxy rtfm:3000
 }
 ```
 
-### With SSH Keys (Private Repos)
-
-Mount your SSH key for private repositories:
-
-```yaml
-volumes:
-  - docs-data:/app/docs
-  - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+**Nginx:**
+```nginx
+location / {
+    proxy_pass http://rtfm:3000;
+    proxy_set_header Host $host;
+}
 ```
 
-Then use SSH URL:
-```bash
-DOCS_REPO=git@github.com:yourusername/my-private-docs.git
-```
-
-## Security
-
-### Generate Webhook Secret
+## Development
 
 ```bash
-openssl rand -hex 32
+npm install
+npm run dev
 ```
-
-Use this for both:
-1. `WEBHOOK_SECRET` environment variable
-2. GitHub webhook secret field
-
-### HTTPS
-
-Always use HTTPS in production. Use Caddy (automatic HTTPS) or nginx with Let's Encrypt.
-
-### Private Docs
-
-For private documentation repositories:
-- Use SSH keys (mounted in Docker)
-- Or use GitHub personal access tokens in HTTPS URLs
-- Consider adding HTTP basic auth to RTFM itself
 
 ## Troubleshooting
 
 ### Docs Not Loading
 
-Check logs:
 ```bash
 docker-compose logs -f rtfm
 ```
 
-Verify `DOCS_REPO` is correct and accessible.
+Check:
+- `DOCS_REPO` is correct
+- Repository is accessible (public or PAT set)
+- Logs for clone/pull errors
 
-### Webhook Not Working
+### Permission Denied
 
-1. Check GitHub webhook deliveries page
-2. Verify `WEBHOOK_SECRET` matches in both places
-3. Ensure RTFM is accessible from the internet
-4. Check firewall/reverse proxy configuration
-
-### Permission Denied (Git)
-
-For private repos with SSH:
-```bash
-# Test SSH access
-docker-compose exec rtfm ssh -T git@github.com
-```
+For private repos:
+- Verify `GITHUB_PAT` is set in `.env`
+- PAT needs `repo` scope
+- Check token hasn't expired
 
 ## License
 
-MIT - Do whatever you want with it
-
-## Contributing
-
-PRs welcome! Keep it simple though - that's the whole point.
-
+MIT
 
 ---
 

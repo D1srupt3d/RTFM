@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
@@ -6,7 +9,6 @@ const matter = require('gray-matter');
 const { glob } = require('glob');
 const { exec } = require('child_process');
 const util = require('util');
-const rateLimit = require('express-rate-limit');
 
 const execPromise = util.promisify(exec);
 
@@ -14,42 +16,40 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DOCS_DIR = path.join(__dirname, 'docs');
 const DOCS_REPO = process.env.DOCS_REPO || '';
+const GITHUB_PAT = process.env.GITHUB_PAT || '';
 const DOCS_BRANCH = process.env.DOCS_BRANCH || 'main';
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'change-me-in-production';
 
-// Load configuration
-let config = {};
-async function loadConfig() {
-    try {
-        // Try custom config first (mounted volume)
-        let configPath = path.join(__dirname, 'config.json');
-        let configExists = await fs.access(configPath).then(() => true).catch(() => false);
-        
-        if (configExists) {
-            const configFile = await fs.readFile(configPath, 'utf-8');
-            config = JSON.parse(configFile);
-            console.log('✅ Loaded custom config.json');
-        } else {
-            // Fall back to default config
-            configPath = path.join(__dirname, 'config.example.json');
-            configExists = await fs.access(configPath).then(() => true).catch(() => false);
-            
-            if (configExists) {
-                const configFile = await fs.readFile(configPath, 'utf-8');
-                config = JSON.parse(configFile);
-                console.log('ℹ️  Using default configuration');
-            } else {
-                throw new Error('No configuration file found');
-            }
-        }
-    } catch (error) {
-        console.error('❌ Error loading config:', error.message);
-        config = {
-            site: { title: 'RTFM', tagline: 'Read The Friendly Manual', logo: '📚' },
-            links: {}
-        };
+// Build authenticated repo URL if PAT is provided
+function getAuthenticatedRepoUrl() {
+    if (!DOCS_REPO) return '';
+    
+    // If PAT is provided and repo is HTTPS, inject it
+    if (GITHUB_PAT && DOCS_REPO.startsWith('https://')) {
+        // Insert PAT after https://
+        return DOCS_REPO.replace('https://', `https://${GITHUB_PAT}@`);
     }
+    
+    return DOCS_REPO;
 }
+
+// Load configuration (hybrid: env vars + config.js)
+let config = {};
+try {
+    config = require('./config.js');
+    console.log('✅ Loaded config.js');
+} catch (error) {
+    // Use defaults if config.js doesn't exist
+    config = {
+        site: { title: 'RTFM', tagline: 'Read The F***ing Manual', logo: '📚' },
+        links: {}
+    };
+}
+
+// Environment variables override config.js
+if (process.env.SITE_TITLE) config.site.title = process.env.SITE_TITLE;
+if (process.env.SITE_TAGLINE) config.site.tagline = process.env.SITE_TAGLINE;
+if (process.env.SITE_LOGO) config.site.logo = process.env.SITE_LOGO;
+if (process.env.GITHUB_LINK) config.links.github = process.env.GITHUB_LINK;
 
 // Initialize docs repository on startup
 async function initDocsRepo() {
@@ -71,13 +71,16 @@ async function initDocsRepo() {
             return;
         }
 
+        const authRepoUrl = getAuthenticatedRepoUrl();
+        const repoDisplay = DOCS_REPO.replace(/https:\/\/.*@/, 'https://***@'); // Hide PAT in logs
+
         if (exists) {
             console.log('📁 Docs directory exists, pulling latest changes...');
             const { stdout } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
             console.log('✅ Docs updated:', stdout.trim());
         } else {
-            console.log(`📦 Cloning docs from ${DOCS_REPO}...`);
-            const { stdout } = await execPromise(`git clone -b ${DOCS_BRANCH} ${DOCS_REPO} ${DOCS_DIR}`);
+            console.log(`📦 Cloning docs from ${repoDisplay}...`);
+            const { stdout } = await execPromise(`git clone -b ${DOCS_BRANCH} ${authRepoUrl} ${DOCS_DIR}`);
             console.log('✅ Docs cloned successfully');
         }
     } catch (error) {
@@ -94,14 +97,7 @@ async function initDocsRepo() {
 }
 
 // Middleware
-app.use(express.json());
 app.use(express.static('public'));
-
-// Rate limiting for webhook
-const webhookLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10 // limit each IP to 10 requests per windowMs
-});
 
 // Configure marked
 marked.setOptions({
@@ -267,41 +263,8 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-// GitHub webhook endpoint
-app.post('/webhook/github', webhookLimiter, async (req, res) => {
-    try {
-        // Basic secret verification
-        const secret = req.headers['x-webhook-secret'];
-        
-        if (secret !== WEBHOOK_SECRET) {
-            console.log('Webhook: Invalid secret');
-            return res.status(401).json({ error: 'Invalid secret' });
-        }
-
-        const event = req.headers['x-github-event'];
-        
-        // Only process push and pull_request events
-        if (event === 'push' || event === 'pull_request') {
-            console.log(`🔄 Webhook received: ${event}`);
-            
-            // Pull latest changes from docs repo
-            const { stdout, stderr } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
-            console.log('✅ Docs updated:', stdout.trim());
-            if (stderr) console.error('Git stderr:', stderr);
-            
-            res.json({ success: true, message: 'Documentation updated' });
-        } else {
-            res.json({ success: true, message: 'Event ignored' });
-        }
-    } catch (error) {
-        console.error('❌ Webhook error:', error);
-        res.status(500).json({ error: 'Failed to update documentation' });
-    }
-});
-
 // Start server
 async function start() {
-    await loadConfig();
     await initDocsRepo();
     app.listen(PORT, () => {
         console.log(`\n📚 ${config.site?.title || 'RTFM'} - Documentation Server`);

@@ -1,6 +1,26 @@
+# Dependencies
 node_modules/
+
+# Local documentation
 docs/
+
+# Environment variables (users should create their own)
 .env
-config.json
+.env.local
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local config overrides
+config.local.js

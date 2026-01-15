@@ -689,18 +689,19 @@ body {
 
 /* Table of Contents */
 .toc {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    padding: 20px;
+    background: transparent;
+    border-left: 2px solid var(--color-border);
+    padding: 8px 0 8px 16px;
     margin: 24px 0;
 }
 
 .toc-title {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 12px;
-    color: var(--color-primary);
+    font-weight: 500;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .toc-list {
@@ -710,23 +711,31 @@ body {
 }
 
 .toc-item {
-    margin: 8px 0;
+    margin: 4px 0;
 }
 
 .toc-item a {
     color: var(--color-text-secondary);
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: all var(--transition-fast);
     display: block;
+    font-size: 14px;
+    padding: 2px 0;
 }
 
 .toc-item a:hover {
     color: var(--color-primary);
+    padding-left: 4px;
 }
 
 .toc-h3 {
-    padding-left: 16px;
-    font-size: 14px;
+    padding-left: 12px;
+    font-size: 13px;
+}
+
+.toc-h3 a {
+    color: var(--color-text-secondary);
+    opacity: 0.8;
 }
 
 /* Last Modified */

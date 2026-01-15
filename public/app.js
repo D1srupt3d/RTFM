@@ -10,14 +10,21 @@ async function init() {
     await loadNavigation();
     setupEventListeners();
     
-    // Load initial doc from URL hash or first doc
+    // Load initial doc from URL hash, index, or first doc
     const hash = window.location.hash.slice(1);
     if (hash) {
         loadDocument(hash);
-    } else if (navData.length > 0) {
-        const firstDoc = findFirstDocument(navData);
-        if (firstDoc) {
-            loadDocument(firstDoc.path);
+    } else {
+        // Try to load index.md first, fall back to first document
+        const indexExists = await fetch('/api/doc/index').then(r => r.ok).catch(() => false);
+        
+        if (indexExists) {
+            loadDocument('index');
+        } else if (navData.length > 0) {
+            const firstDoc = findFirstDocument(navData);
+            if (firstDoc) {
+                loadDocument(firstDoc.path);
+            }
         }
     }
 }

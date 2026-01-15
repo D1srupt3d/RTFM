@@ -188,10 +188,21 @@ async function getMarkdownContent(filePath) {
         const { data: frontmatter, content: markdown } = matter(content);
         const html = marked(markdown);
         
+        // Get last modified timestamp
+        let lastModified = null;
+        try {
+            const { stdout } = await execPromise(`cd ${DOCS_DIR} && git log -1 --format=%cd --date=relative -- "${filePath}.md"`);
+            lastModified = stdout.trim();
+        } catch (error) {
+            // If git fails, file might be new or not in repo
+            console.error(`Could not get last modified time for ${filePath}:`, error.message);
+        }
+        
         return {
             frontmatter,
             html,
-            title: frontmatter.title || path.basename(filePath).replace(/-/g, ' ')
+            title: frontmatter.title || path.basename(filePath).replace(/-/g, ' '),
+            lastModified
         };
     } catch (error) {
         throw new Error(`Document not found: ${filePath}`);
@@ -254,6 +265,22 @@ app.get('/api/config', (req, res) => {
         site: config.site,
         links: config.links
     });
+});
+
+app.get('/api/commit', async (req, res) => {
+    try {
+        const { stdout: hash } = await execPromise(`cd ${DOCS_DIR} && git rev-parse --short HEAD`);
+        const { stdout: message } = await execPromise(`cd ${DOCS_DIR} && git log -1 --pretty=%s`);
+        const { stdout: date } = await execPromise(`cd ${DOCS_DIR} && git log -1 --pretty=%cr`);
+        
+        res.json({
+            hash: hash.trim(),
+            message: message.trim(),
+            date: date.trim()
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get commit info' });
+    }
 });
 
 app.get('/api/nav', async (req, res) => {

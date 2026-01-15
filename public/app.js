@@ -86,6 +86,28 @@ function applyConfig() {
             });
         }
     }
+    
+    // Add commit info
+    loadCommitInfo();
+}
+
+// Load and display latest commit info
+async function loadCommitInfo() {
+    try {
+        const response = await fetch('/api/commit');
+        const commit = await response.json();
+        
+        const footer = document.getElementById('sidebar-footer');
+        const commitInfo = document.createElement('div');
+        commitInfo.className = 'commit-info';
+        commitInfo.innerHTML = `
+            <div class="commit-hash">${commit.hash}</div>
+            <div class="commit-date">${commit.date}</div>
+        `;
+        footer.appendChild(commitInfo);
+    } catch (error) {
+        console.error('Failed to load commit info:', error);
+    }
 }
 
 // Find first document in nav tree
@@ -190,6 +212,17 @@ async function loadDocument(path) {
         const contentElement = document.getElementById('doc-content');
         contentElement.innerHTML = doc.html;
         
+        // Add copy buttons to code blocks
+        addCopyButtons();
+        
+        // Generate table of contents
+        generateTOC();
+        
+        // Show last modified time
+        if (doc.lastModified) {
+            showLastModified(doc.lastModified);
+        }
+        
         // Scroll to top
         document.querySelector('.content').scrollTop = 0;
         
@@ -206,9 +239,17 @@ async function loadDocument(path) {
             loadDocument('index');
         } else {
             document.getElementById('doc-content').innerHTML = `
-                <div class="loading">
-                    <h2>📄 Document not found</h2>
-                    <p>${error.message}</p>
+                <div class="error-404">
+                    <div class="error-icon">📄</div>
+                    <h1>Document Not Found</h1>
+                    <p>The page you're looking for doesn't exist.</p>
+                    <button onclick="window.location.hash='index'" class="home-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        Go Home
+                    </button>
                 </div>
             `;
         }
@@ -374,6 +415,123 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Add copy buttons to code blocks
+function addCopyButtons() {
+    document.querySelectorAll('pre').forEach(pre => {
+        // Skip if already has button
+        if (pre.querySelector('.copy-button')) return;
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        `;
+        button.title = 'Copy code';
+        
+        button.addEventListener('click', async () => {
+            const code = pre.querySelector('code').textContent;
+            await navigator.clipboard.writeText(code);
+            
+            button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            `;
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                `;
+                button.classList.remove('copied');
+            }, 2000);
+        });
+        
+        pre.style.position = 'relative';
+        pre.appendChild(button);
+    });
+}
+
+// Generate table of contents
+function generateTOC() {
+    const content = document.getElementById('doc-content');
+    const headings = content.querySelectorAll('h2, h3');
+    
+    // Remove existing TOC
+    const existingTOC = content.querySelector('.toc');
+    if (existingTOC) existingTOC.remove();
+    
+    // Only generate if there are 3+ headings
+    if (headings.length < 3) return;
+    
+    const toc = document.createElement('div');
+    toc.className = 'toc';
+    
+    const tocTitle = document.createElement('div');
+    tocTitle.className = 'toc-title';
+    tocTitle.textContent = 'Table of Contents';
+    toc.appendChild(tocTitle);
+    
+    const tocList = document.createElement('ul');
+    tocList.className = 'toc-list';
+    
+    headings.forEach((heading, index) => {
+        const id = `heading-${index}`;
+        heading.id = id;
+        
+        const li = document.createElement('li');
+        li.className = `toc-item toc-${heading.tagName.toLowerCase()}`;
+        
+        const link = document.createElement('a');
+        link.href = `#${id}`;
+        link.textContent = heading.textContent;
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        
+        li.appendChild(link);
+        tocList.appendChild(li);
+    });
+    
+    toc.appendChild(tocList);
+    
+    // Insert TOC after first h1 or at beginning
+    const firstH1 = content.querySelector('h1');
+    if (firstH1 && firstH1.nextSibling) {
+        firstH1.parentNode.insertBefore(toc, firstH1.nextSibling);
+    } else {
+        content.insertBefore(toc, content.firstChild);
+    }
+}
+
+// Show last modified time
+function showLastModified(time) {
+    const content = document.getElementById('doc-content');
+    
+    // Remove existing timestamp
+    const existing = content.querySelector('.last-modified');
+    if (existing) existing.remove();
+    
+    const timestamp = document.createElement('div');
+    timestamp.className = 'last-modified';
+    timestamp.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Last updated ${time}
+    `;
+    
+    content.appendChild(timestamp);
 }
 
 // Start the app

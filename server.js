@@ -10,9 +10,9 @@ const util = require('util');
 
 const execPromise = util.promisify(exec);
 
-// Dynamic import for marked (ES module)
+// Dynamic import for marked (ES module) - must be loaded before server starts
 let marked;
-(async () => {
+async function initMarked() {
     const markedModule = await import('marked');
     marked = markedModule.marked;
     
@@ -40,7 +40,7 @@ let marked;
         mangle: false,
         renderer: renderer
     });
-})();
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -302,6 +302,7 @@ app.get('/*catchall', (req, res) => {
 });
 
 async function start() {
+    await initMarked();
     await initDocsRepo();
     app.listen(PORT, () => {
         console.log(`${config.site?.title || 'RTFM'} running on port ${PORT}`);

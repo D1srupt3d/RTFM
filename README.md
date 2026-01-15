@@ -89,7 +89,7 @@ Planned for v0.3.0+:
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.2.0).
+PRs and issues welcome. Project is in active development (currently v0.2.1).
 
 ## Example Documentation
 

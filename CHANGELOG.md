@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-01-15
+
+### Fixed
+- Fixed marked initialization timing issue that prevented documents from loading
+- Ensured marked ES module is fully initialized before server accepts requests
+
 ## [0.2.0] - 2026-01-15
 
 ### Added

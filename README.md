@@ -42,7 +42,3 @@ docker-compose restart
 npm install
 npm run dev
 ```
-
-## License
-
-MIT

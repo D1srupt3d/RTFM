@@ -466,19 +466,21 @@ function generateTOC() {
     const headings = content.querySelectorAll('h2, h3');
     
     // Remove existing TOC
-    const existingTOC = content.querySelector('.toc');
+    const existingTOC = document.querySelector('.toc-sidebar');
     if (existingTOC) existingTOC.remove();
     
-    // Only generate if there are 3+ headings
-    if (headings.length < 3) return;
+    // Only generate if there are 6+ headings (for longer docs)
+    if (headings.length < 6) return;
     
     const toc = document.createElement('div');
-    toc.className = 'toc';
+    toc.className = 'toc-sidebar';
     
-    const tocTitle = document.createElement('div');
-    tocTitle.className = 'toc-title';
-    tocTitle.textContent = 'Table of Contents';
-    toc.appendChild(tocTitle);
+    const tocHeader = document.createElement('div');
+    tocHeader.className = 'toc-header';
+    tocHeader.innerHTML = `
+        <span class="toc-title">On This Page</span>
+    `;
+    toc.appendChild(tocHeader);
     
     const tocList = document.createElement('ul');
     tocList.className = 'toc-list';
@@ -504,13 +506,8 @@ function generateTOC() {
     
     toc.appendChild(tocList);
     
-    // Insert TOC after first h1 or at beginning
-    const firstH1 = content.querySelector('h1');
-    if (firstH1 && firstH1.nextSibling) {
-        firstH1.parentNode.insertBefore(toc, firstH1.nextSibling);
-    } else {
-        content.insertBefore(toc, content.firstChild);
-    }
+    // Insert TOC as floating sidebar on the right
+    document.querySelector('.content').appendChild(toc);
 }
 
 // Show last modified time

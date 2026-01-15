@@ -2,19 +2,8 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches:
-      - main
-      - master
     tags:
       - 'v*'
-    paths:
-      - 'package*.json'
-      - 'server.js'
-      - 'config.js'
-      - 'public/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 env:

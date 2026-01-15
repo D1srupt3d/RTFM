@@ -57,6 +57,13 @@ async function initDocsRepo() {
         const exists = await fs.access(DOCS_DIR).then(() => true).catch(() => false);
         const isGitRepo = exists && await fs.access(path.join(DOCS_DIR, '.git')).then(() => true).catch(() => false);
         
+        // Check if directory is empty (Docker creates it as empty when volume is first mounted)
+        let isEmpty = false;
+        if (exists && !isGitRepo) {
+            const files = await fs.readdir(DOCS_DIR);
+            isEmpty = files.length === 0;
+        }
+        
         if (!DOCS_REPO) {
             console.log('⚠️  No DOCS_REPO configured. Please set DOCS_REPO environment variable.');
             console.log('   Example: DOCS_REPO=https://github.com/user/docs.git');
@@ -79,7 +86,7 @@ async function initDocsRepo() {
             console.log('📁 Docs directory exists, pulling latest changes...');
             const { stdout } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
             console.log('✅ Docs updated:', stdout.trim());
-        } else if (exists) {
+        } else if (exists && !isEmpty) {
             throw new Error('Docs directory exists but is not a git repository. Please run: docker-compose down -v');
         } else {
             console.log(`📦 Cloning docs from ${repoDisplay}...`);

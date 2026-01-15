@@ -4,6 +4,7 @@ services:
   rtfm:
     image: ghcr.io/d1srupt3d/rtfm:latest # uncomment if you want to use the pre-built image from GitHub Container Registry
     # build: . # uncomment if you want to build the image locally
+    container_name: rtfm
     ports:
       - "3000:3000"
     env_file:
@@ -17,6 +18,20 @@ services:
       # edit it locally, then uncomment below. For simple changes (title/logo),
       # use environment variables in .env instead.
       # - ./config.js:/app/config.js:ro
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_POLL_INTERVAL=300  # Check every 5 minutes
     restart: unless-stopped
 
 volumes:

@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-01-15
+
+### Fixed
+- Fixed language badge overlapping code content by adjusting code block padding
+- Improved badge styling with semi-transparent background and backdrop blur
+
+### Added
+- Added HCL (Terraform) language support for syntax highlighting
+
 ## [0.2.1] - 2026-01-15
 
 ### Fixed
-- Fixed marked initialization timing issue that prevented documents from loading
+- Fixed marked v17 API compatibility issue with code renderer
+- Updated code renderer to handle token object instead of string parameters
 - Ensured marked ES module is fully initialized before server accepts requests
 
 ## [0.2.0] - 2026-01-15

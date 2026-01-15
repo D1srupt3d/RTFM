@@ -13,7 +13,7 @@ This is an example documentation site. To use RTFM with your own docs:
 ## Features
 
 - **14 Beautiful Themes** - Switch between Dark, Light, Catppuccin, Nord, Dracula, and more
-- **Advanced Syntax Highlighting** - Support for 15+ programming languages
+- **Advanced Syntax Highlighting** - Support for 16+ programming languages
 - **Full-text Search** - Press `Ctrl+K` to search across all documentation
 - **Git-backed** - Your docs live in version control
 - **Zero Configuration** - Just point and serve

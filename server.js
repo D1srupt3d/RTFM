@@ -18,8 +18,11 @@ async function initMarked() {
     
     // Configure marked with custom renderer for proper language classes
     const renderer = new markedModule.marked.Renderer();
-    renderer.code = function(code, infostring) {
-        const lang = (infostring || '').match(/\S*/)[0];
+    renderer.code = function(token) {
+        // In marked v17+, code receives a token object with: text, lang, escaped
+        const code = token.text || token;
+        const lang = token.lang || '';
+        
         const escapedCode = code
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')

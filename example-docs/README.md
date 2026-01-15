@@ -5,7 +5,7 @@ This folder contains example documentation that demonstrates RTFM's features.
 ## Files
 
 - `index.md` - Welcome page with quick start guide
-- `syntax-test.md` - Comprehensive syntax highlighting showcase (15+ languages)
+- `syntax-test.md` - Comprehensive syntax highlighting showcase (16+ languages)
 
 ## Usage
 

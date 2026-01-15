@@ -765,7 +765,7 @@ body {
 
 /* Let highlight.js theme control the styling */
 .doc-content pre code.hljs {
-    padding: 20px;
+    padding: 40px 20px 20px 20px;
     border: none;
     font-size: 14px;
     line-height: 1.6;
@@ -777,7 +777,7 @@ body {
 /* Fallback for non-highlighted code */
 .doc-content pre code:not(.hljs) {
     background: var(--color-bg-secondary);
-    padding: 20px;
+    padding: 40px 20px 20px 20px;
     border: none;
     font-size: 14px;
     line-height: 1.6;
@@ -905,28 +905,29 @@ body {
 /* Language Badge */
 .language-badge {
     position: absolute;
-    top: 8px;
-    left: 12px;
-    background: var(--color-bg-tertiary);
+    top: 12px;
+    left: 16px;
+    background: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 11px;
+    padding: 4px 10px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     color: var(--color-primary);
     font-family: var(--font-code);
     z-index: 2;
     pointer-events: none;
-    opacity: 0.9;
+    opacity: 0.85;
+    backdrop-filter: blur(4px);
 }
 
 /* Copy Button */
 .copy-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 12px;
+    right: 12px;
     background: var(--color-bg-tertiary);
     border: 1px solid var(--color-border);
     border-radius: 4px;

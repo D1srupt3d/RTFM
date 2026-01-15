@@ -307,6 +307,50 @@ $result = $db->query("SELECT * FROM users");
 ![Alt text](image.png)
 ```
 
+## HCL (Terraform)
+
+```hcl
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+}
+
+variable "aws_region" {
+  description = "AWS region to deploy resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+resource "aws_instance" "web_server" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t3.micro"
+
+  tags = {
+    Name        = "web-server"
+    Environment = "production"
+    ManagedBy   = "terraform"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.web_server.id
+}
+```
+
 ---
 
 All code blocks above should be properly highlighted with:

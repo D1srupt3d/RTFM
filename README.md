@@ -13,7 +13,7 @@ Managing homelab documentation is a pain. MkDocs requires build steps and static
 - **Git-backed** - Docs live in version control, restart container to pull latest changes
 - **14 Themes** - Dark, Light, Catppuccin, Nord, Dracula, Monokai, Solarized, and more
 - **Full-text Search** - Keyboard shortcut (Ctrl+K) to search across all documentation
-- **Syntax Highlighting** - 15+ languages with copy buttons, language badges, and auto-detection
+- **Syntax Highlighting** - 16+ languages with copy buttons, language badges, and auto-detection
 - **Auto-generated Navigation** - Sidebar builds from your folder structure
 - **Mobile Responsive** - Works on phones and tablets
 - **Private Repos** - Supports GitHub personal access tokens
@@ -29,7 +29,7 @@ cp env.template .env
 docker-compose up -d
 ```
 
-The `example-docs/` folder contains sample documentation including a [syntax highlighting test page](example-docs/syntax-test.md) showcasing 15+ languages.
+The `example-docs/` folder contains sample documentation including a [syntax highlighting test page](example-docs/syntax-test.md) showcasing 16+ languages.
 
 ## Config
 
@@ -89,13 +89,13 @@ Planned for v0.3.0+:
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.2.1).
+PRs and issues welcome. Project is in active development (currently v0.2.2).
 
 ## Example Documentation
 
 The `example-docs/` folder contains sample documentation including:
 - Welcome page with quick start guide
-- [Syntax highlighting test](example-docs/syntax-test.md) showcasing 15+ languages
+- [Syntax highlighting test](example-docs/syntax-test.md) showcasing 16+ languages
 
 Use these as templates for your own documentation.
 

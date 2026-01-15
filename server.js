@@ -85,8 +85,22 @@ async function initDocsRepo() {
         }
         
         if (!DOCS_REPO) {
-            console.log('No DOCS_REPO configured');
-            if (!exists) {
+            console.log('No DOCS_REPO configured - using example docs');
+            const exampleDocsDir = path.join(__dirname, 'example-docs');
+            const exampleExists = await fs.access(exampleDocsDir).then(() => true).catch(() => false);
+            
+            if (exampleExists && !exists) {
+                // Copy example-docs to docs for demo purposes
+                await fs.mkdir(DOCS_DIR, { recursive: true });
+                const files = await glob('**/*', { cwd: exampleDocsDir, nodir: true });
+                for (const file of files) {
+                    const srcPath = path.join(exampleDocsDir, file);
+                    const destPath = path.join(DOCS_DIR, file);
+                    await fs.mkdir(path.dirname(destPath), { recursive: true });
+                    await fs.copyFile(srcPath, destPath);
+                }
+                console.log('Copied example docs to docs/');
+            } else if (!exists) {
                 await fs.mkdir(DOCS_DIR, { recursive: true });
                 await fs.writeFile(
                     path.join(DOCS_DIR, 'index.md'),

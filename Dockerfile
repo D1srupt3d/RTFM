@@ -10,6 +10,7 @@ RUN npm ci --only=production
 COPY server.js ./
 COPY config.js ./
 COPY public ./public
+COPY example-docs ./example-docs
 
 RUN mkdir -p docs
 

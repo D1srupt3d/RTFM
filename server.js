@@ -89,7 +89,10 @@ async function initDocsRepo() {
             const exampleDocsDir = path.join(__dirname, 'example-docs');
             const exampleExists = await fs.access(exampleDocsDir).then(() => true).catch(() => false);
             
-            if (exampleExists && !exists) {
+            // Check if docs directory is empty
+            const docsEmpty = !exists || (await fs.readdir(DOCS_DIR).catch(() => [])).length === 0;
+            
+            if (exampleExists && docsEmpty) {
                 // Copy example-docs to docs for demo purposes
                 await fs.mkdir(DOCS_DIR, { recursive: true });
                 const files = await glob('**/*', { cwd: exampleDocsDir, nodir: true });
@@ -99,8 +102,8 @@ async function initDocsRepo() {
                     await fs.mkdir(path.dirname(destPath), { recursive: true });
                     await fs.copyFile(srcPath, destPath);
                 }
-                console.log('Copied example docs to docs/');
-            } else if (!exists) {
+                console.log(`Copied ${files.length} example docs to docs/`);
+            } else if (!exampleExists && docsEmpty) {
                 await fs.mkdir(DOCS_DIR, { recursive: true });
                 await fs.writeFile(
                     path.join(DOCS_DIR, 'index.md'),

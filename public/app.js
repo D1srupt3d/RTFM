@@ -6,27 +6,32 @@ let config = {};
 
 // Initialize app
 async function init() {
-    await loadConfig();
-    await loadNavigation();
-    setupEventListeners();
-    loadSyntaxTheme();
-    
-    // Load initial doc from URL path, index, or first doc
-    const path = window.location.pathname.slice(1); // Remove leading slash
-    if (path) {
-        loadDocument(path);
-    } else {
-        // Try to load index.md first, fall back to first document
-        const indexExists = await fetch('/api/doc/index').then(r => r.ok).catch(() => false);
+    try {
+        await loadConfig();
+        await loadNavigation();
+        setupEventListeners();
+        loadSyntaxTheme();
         
-        if (indexExists) {
-            loadDocument('index');
-        } else if (navData.length > 0) {
-            const firstDoc = findFirstDocument(navData);
-            if (firstDoc) {
-                loadDocument(firstDoc.path);
-            }
+        // Load initial doc from URL path, index, or first doc
+        let path = window.location.pathname.slice(1); // Remove leading slash
+        
+        // If path is empty or just '/', load index
+        if (!path || path === '' || path === '/') {
+            path = 'index';
         }
+        
+        loadDocument(path);
+    } catch (error) {
+        console.error('Failed to initialize app:', error);
+        // Show error to user
+        document.getElementById('doc-content').innerHTML = `
+            <div class="error-404">
+                <div class="error-icon">⚠️</div>
+                <h1>Failed to Load</h1>
+                <p>Something went wrong. Please try refreshing the page.</p>
+                <pre style="text-align: left; padding: 20px; background: var(--color-bg-tertiary); border-radius: 8px; overflow: auto;">${error.message}</pre>
+            </div>
+        `;
     }
 }
 
@@ -328,7 +333,7 @@ function setupEventListeners() {
     const searchResults = document.getElementById('search-results');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebar = document.querySelector('.sidebar');
-    const themeSelector = document.getElementById('code-theme');
+    const themeSelector = document.getElementById('site-theme');
     
     // Search
     searchInput.addEventListener('input', (e) => {
@@ -368,7 +373,7 @@ function setupEventListeners() {
     if (themeSelector) {
         themeSelector.addEventListener('change', (e) => {
             const theme = e.target.value;
-            setSyntaxTheme(theme);
+            setSiteTheme(theme);
         });
     }
     
@@ -717,26 +722,55 @@ function highlightCode() {
 }
 
 function loadSyntaxTheme() {
-    const savedTheme = localStorage.getItem('codeTheme') || 'tokyo-night-dark';
-    const themeSelector = document.getElementById('code-theme');
+    const savedTheme = localStorage.getItem('siteTheme') || 'dark';
+    const themeSelector = document.getElementById('site-theme');
     if (themeSelector) {
         themeSelector.value = savedTheme;
     }
-    setSyntaxTheme(savedTheme, false);
+    setSiteTheme(savedTheme, false);
 }
 
-function setSyntaxTheme(theme, save = true) {
+function setSiteTheme(theme, save = true) {
+    // Set site theme via data attribute
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Map site theme to syntax highlighting theme
+    const syntaxThemeMap = {
+        'dark': 'tokyo-night-dark',
+        'light': 'github',
+        'catppuccin-mocha': 'base16/catppuccin-mocha',
+        'catppuccin-macchiato': 'base16/catppuccin-macchiato',
+        'catppuccin-frappe': 'base16/catppuccin-frappe',
+        'catppuccin-latte': 'base16/catppuccin-latte',
+        'github-dark': 'github-dark',
+        'onedark': 'atom-one-dark',
+        'monokai': 'monokai',
+        'dracula': 'dracula',
+        'nord': 'nord',
+        'gruvbox-dark': 'gruvbox-dark',
+        'solarized-dark': 'solarized-dark',
+        'solarized-light': 'solarized-light',
+        'material': 'material',
+        'ayu-dark': 'ayu-dark'
+    };
+    
+    const syntaxTheme = syntaxThemeMap[theme] || 'tokyo-night-dark';
     const link = document.getElementById('highlight-theme');
-    const newHref = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${theme}.min.css`;
+    const newHref = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${syntaxTheme}.min.css`;
     
     // Force CSS reload
     link.href = '';
     setTimeout(() => {
         link.href = newHref;
-    }, 10);
+        
+        // Re-highlight all code blocks
+        setTimeout(() => {
+            highlightCode();
+        }, 100);
+    }, 50);
     
     if (save) {
-        localStorage.setItem('codeTheme', theme);
+        localStorage.setItem('siteTheme', theme);
     }
 }
 

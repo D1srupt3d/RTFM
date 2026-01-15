@@ -116,8 +116,8 @@ async function initDocsRepo() {
     }
 }
 
-// Middleware
-app.use(express.static('public'));
+// Middleware - serve static files FIRST (before catch-all route)
+app.use(express.static('public', { maxAge: '1h' }));
 
 // Configure marked
 marked.setOptions({
@@ -256,9 +256,7 @@ async function searchDocs(query) {
 }
 
 // Routes
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// Root route handled by catch-all below
 
 app.get('/api/config', (req, res) => {
     res.json({
@@ -315,14 +313,21 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-// Catch-all route for SPA - serve index.html for all non-API routes
+// Catch-all route for SPA - serve index.html for all non-API/non-static routes
 app.get('*', (req, res) => {
     // Don't redirect API routes
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
     
-    // For SPA routing with clean URLs, always serve index.html
+    // Don't serve index.html for static file requests (they should 404 if not found)
+    // This prevents serving HTML when JS/CSS files are requested
+    const ext = path.extname(req.path);
+    if (ext && ['.js', '.css', '.png', '.jpg', '.ico', '.svg', '.woff', '.woff2', '.ttf'].includes(ext)) {
+        return res.status(404).send('File not found');
+    }
+    
+    // For SPA routing with clean URLs, serve index.html
     // The frontend will handle the routing via History API
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

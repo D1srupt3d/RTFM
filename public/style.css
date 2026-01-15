@@ -5,7 +5,7 @@
 }
 
 :root {
-    /* Purple dark theme */
+    /* Default Dark theme */
     --color-primary: #a78bfa;
     --color-primary-hover: #8b5cf6;
     --color-bg-primary: #0a0a0f;
@@ -30,6 +30,195 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --color-primary: #7c3aed;
+    --color-primary-hover: #6d28d9;
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f9fafb;
+    --color-bg-tertiary: #f3f4f6;
+    --color-text-primary: #111827;
+    --color-text-secondary: #6b7280;
+    --color-border: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Nord Theme */
+[data-theme="nord"] {
+    --color-primary: #88c0d0;
+    --color-primary-hover: #81a1c1;
+    --color-bg-primary: #2e3440;
+    --color-bg-secondary: #3b4252;
+    --color-bg-tertiary: #434c5e;
+    --color-text-primary: #eceff4;
+    --color-text-secondary: #d8dee9;
+    --color-border: #4c566a;
+}
+
+/* Dracula Theme */
+[data-theme="dracula"] {
+    --color-primary: #bd93f9;
+    --color-primary-hover: #ff79c6;
+    --color-bg-primary: #282a36;
+    --color-bg-secondary: #21222c;
+    --color-bg-tertiary: #343746;
+    --color-text-primary: #f8f8f2;
+    --color-text-secondary: #6272a4;
+    --color-border: #44475a;
+}
+
+/* Monokai Theme */
+[data-theme="monokai"] {
+    --color-primary: #66d9ef;
+    --color-primary-hover: #a6e22e;
+    --color-bg-primary: #272822;
+    --color-bg-secondary: #1e1f1c;
+    --color-bg-tertiary: #3e3d32;
+    --color-text-primary: #f8f8f2;
+    --color-text-secondary: #75715e;
+    --color-border: #49483e;
+}
+
+/* One Dark (Atom) Theme */
+[data-theme="onedark"] {
+    --color-primary: #61afef;
+    --color-primary-hover: #528bff;
+    --color-bg-primary: #282c34;
+    --color-bg-secondary: #21252b;
+    --color-bg-tertiary: #2c313a;
+    --color-text-primary: #abb2bf;
+    --color-text-secondary: #5c6370;
+    --color-border: #3e4451;
+}
+
+/* GitHub Dark Theme */
+[data-theme="github-dark"] {
+    --color-primary: #58a6ff;
+    --color-primary-hover: #1f6feb;
+    --color-bg-primary: #0d1117;
+    --color-bg-secondary: #161b22;
+    --color-bg-tertiary: #21262d;
+    --color-text-primary: #c9d1d9;
+    --color-text-secondary: #8b949e;
+    --color-border: #30363d;
+}
+
+/* Gruvbox Dark Theme */
+[data-theme="gruvbox-dark"] {
+    --color-primary: #fe8019;
+    --color-primary-hover: #d65d0e;
+    --color-bg-primary: #282828;
+    --color-bg-secondary: #1d2021;
+    --color-bg-tertiary: #3c3836;
+    --color-text-primary: #ebdbb2;
+    --color-text-secondary: #a89984;
+    --color-border: #504945;
+}
+
+/* Solarized Dark Theme */
+[data-theme="solarized-dark"] {
+    --color-primary: #268bd2;
+    --color-primary-hover: #2aa198;
+    --color-bg-primary: #002b36;
+    --color-bg-secondary: #073642;
+    --color-bg-tertiary: #094352;
+    --color-text-primary: #839496;
+    --color-text-secondary: #586e75;
+    --color-border: #094652;
+}
+
+/* Solarized Light Theme */
+[data-theme="solarized-light"] {
+    --color-primary: #268bd2;
+    --color-primary-hover: #2aa198;
+    --color-bg-primary: #fdf6e3;
+    --color-bg-secondary: #eee8d5;
+    --color-bg-tertiary: #e9e2d0;
+    --color-text-primary: #657b83;
+    --color-text-secondary: #93a1a1;
+    --color-border: #d9d2c2;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Material Theme */
+[data-theme="material"] {
+    --color-primary: #82aaff;
+    --color-primary-hover: #65bcff;
+    --color-bg-primary: #263238;
+    --color-bg-secondary: #1e272c;
+    --color-bg-tertiary: #2e3c43;
+    --color-text-primary: #eeffff;
+    --color-text-secondary: #546e7a;
+    --color-border: #37474f;
+}
+
+/* Ayu Dark Theme */
+[data-theme="ayu-dark"] {
+    --color-primary: #ffb454;
+    --color-primary-hover: #ff8f40;
+    --color-bg-primary: #0a0e14;
+    --color-bg-secondary: #0d1016;
+    --color-bg-tertiary: #131721;
+    --color-text-primary: #b3b1ad;
+    --color-text-secondary: #4d5566;
+    --color-border: #1f2430;
+}
+
+/* Catppuccin Mocha (Dark) */
+[data-theme="catppuccin-mocha"] {
+    --color-primary: #cba6f7;
+    --color-primary-hover: #b4befe;
+    --color-bg-primary: #1e1e2e;
+    --color-bg-secondary: #181825;
+    --color-bg-tertiary: #313244;
+    --color-text-primary: #cdd6f4;
+    --color-text-secondary: #a6adc8;
+    --color-border: #45475a;
+}
+
+/* Catppuccin Macchiato */
+[data-theme="catppuccin-macchiato"] {
+    --color-primary: #c6a0f6;
+    --color-primary-hover: #b7bdf8;
+    --color-bg-primary: #24273a;
+    --color-bg-secondary: #1e2030;
+    --color-bg-tertiary: #363a4f;
+    --color-text-primary: #cad3f5;
+    --color-text-secondary: #a5adcb;
+    --color-border: #494d64;
+}
+
+/* Catppuccin Frappe */
+[data-theme="catppuccin-frappe"] {
+    --color-primary: #ca9ee6;
+    --color-primary-hover: #babbf1;
+    --color-bg-primary: #303446;
+    --color-bg-secondary: #292c3c;
+    --color-bg-tertiary: #414559;
+    --color-text-primary: #c6d0f5;
+    --color-text-secondary: #a5adce;
+    --color-border: #51576d;
+}
+
+/* Catppuccin Latte (Light) */
+[data-theme="catppuccin-latte"] {
+    --color-primary: #8839ef;
+    --color-primary-hover: #7287fd;
+    --color-bg-primary: #eff1f5;
+    --color-bg-secondary: #e6e9ef;
+    --color-bg-tertiary: #dce0e8;
+    --color-text-primary: #4c4f69;
+    --color-text-secondary: #5c5f77;
+    --color-border: #ccd0da;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 body {

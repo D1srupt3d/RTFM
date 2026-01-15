@@ -128,12 +128,15 @@ function renderNavigation(items, parentElement = null) {
             dirElement.className = 'nav-item dir';
             dirElement.textContent = item.title;
             dirElement.dataset.name = item.name;
+            dirElement.dataset.type = 'dir'; // Mark as directory
             
             const childrenContainer = document.createElement('div');
             childrenContainer.className = 'nav-children';
             
             dirElement.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
+                // Only toggle expand/collapse, don't navigate
                 dirElement.classList.toggle('expanded');
                 childrenContainer.classList.toggle('visible');
             });
@@ -195,18 +198,33 @@ async function loadDocument(path) {
         
     } catch (error) {
         console.error('Failed to load document:', error);
-        document.getElementById('doc-content').innerHTML = `
-            <div class="loading">
-                <h2>📄 Document not found</h2>
-                <p>${error.message}</p>
-            </div>
-        `;
+        
+        // If document not found, redirect to homepage
+        if (error.message === 'Document not found') {
+            console.log('Document not found, redirecting to homepage...');
+            window.location.hash = 'index';
+            loadDocument('index');
+        } else {
+            document.getElementById('doc-content').innerHTML = `
+                <div class="loading">
+                    <h2>📄 Document not found</h2>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
 // Update breadcrumbs
 function updateBreadcrumbs(path) {
     const breadcrumbsElement = document.getElementById('breadcrumbs');
+    
+    // Hide breadcrumbs on homepage
+    if (path === 'index') {
+        breadcrumbsElement.style.display = 'none';
+        return;
+    }
+    
     const parts = path.split('/');
     
     let html = '<div class="breadcrumb-item"><a href="#index">Home</a></div>';

@@ -144,6 +144,11 @@ async function buildNavTree() {
     const tree = [];
 
     for (const file of files) {
+        // Skip index.md and README.md from navigation
+        if (file === 'index.md' || file === 'README.md') {
+            continue;
+        }
+        
         const parts = file.split('/');
         const fileName = parts[parts.length - 1];
         const title = fileName.replace('.md', '').replace(/-/g, ' ');

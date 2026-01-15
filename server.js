@@ -55,6 +55,7 @@ if (process.env.GITHUB_LINK) config.links.github = process.env.GITHUB_LINK;
 async function initDocsRepo() {
     try {
         const exists = await fs.access(DOCS_DIR).then(() => true).catch(() => false);
+        const isGitRepo = exists && await fs.access(path.join(DOCS_DIR, '.git')).then(() => true).catch(() => false);
         
         if (!DOCS_REPO) {
             console.log('⚠️  No DOCS_REPO configured. Please set DOCS_REPO environment variable.');
@@ -74,11 +75,15 @@ async function initDocsRepo() {
         const authRepoUrl = getAuthenticatedRepoUrl();
         const repoDisplay = DOCS_REPO.replace(/https:\/\/.*@/, 'https://***@'); // Hide PAT in logs
 
-        if (exists) {
+        if (isGitRepo) {
             console.log('📁 Docs directory exists, pulling latest changes...');
             const { stdout } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
             console.log('✅ Docs updated:', stdout.trim());
         } else {
+            if (exists) {
+                console.log('📁 Docs directory exists but is not a git repo, removing and cloning...');
+                await execPromise(`rm -rf ${DOCS_DIR}`);
+            }
             console.log(`📦 Cloning docs from ${repoDisplay}...`);
             const { stdout } = await execPromise(`git clone -b ${DOCS_BRANCH} ${authRepoUrl} ${DOCS_DIR}`);
             console.log('✅ Docs cloned successfully');

@@ -7,10 +7,26 @@ on:
       - master
     tags:
       - 'v*'
+    paths:
+      - 'package*.json'
+      - 'server.js'
+      - 'config.js'
+      - 'public/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/build.yml'
   pull_request:
     branches:
       - main
       - master
+    paths:
+      - 'package*.json'
+      - 'server.js'
+      - 'config.js'
+      - 'public/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 env:

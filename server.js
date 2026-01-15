@@ -79,11 +79,9 @@ async function initDocsRepo() {
             console.log('📁 Docs directory exists, pulling latest changes...');
             const { stdout } = await execPromise(`cd ${DOCS_DIR} && git pull origin ${DOCS_BRANCH}`);
             console.log('✅ Docs updated:', stdout.trim());
+        } else if (exists) {
+            throw new Error('Docs directory exists but is not a git repository. Please run: docker-compose down -v');
         } else {
-            if (exists) {
-                console.log('📁 Docs directory exists but is not a git repo, removing and cloning...');
-                await execPromise(`rm -rf ${DOCS_DIR}`);
-            }
             console.log(`📦 Cloning docs from ${repoDisplay}...`);
             const { stdout } = await execPromise(`git clone -b ${DOCS_BRANCH} ${authRepoUrl} ${DOCS_DIR}`);
             console.log('✅ Docs cloned successfully');

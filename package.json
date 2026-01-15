@@ -1,6 +1,6 @@
 {
   "name": "rtfm",
-  "version": "1.0.0",
+  "version": "0..0",
   "description": "Simple markdown documentation server for homelabs",
   "main": "server.js",
   "scripts": {

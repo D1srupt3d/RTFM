@@ -323,6 +323,14 @@ function setupEventListeners() {
         });
     }
     
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', () => {
+            loadDocument('index');
+        });
+    }
+    
     window.addEventListener('popstate', (e) => {
         const path = window.location.pathname.slice(1) || 'index';
         if (path !== currentDoc) {

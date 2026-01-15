@@ -288,6 +288,24 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
+// Catch-all route for SPA - redirect paths to hash routes
+app.get('*', (req, res) => {
+    // Don't redirect API routes
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    
+    // Redirect path-based routes to hash-based routes
+    // e.g. /networking/layout -> /#networking/layout
+    const path = req.path.slice(1); // Remove leading slash
+    if (path) {
+        return res.redirect(`/#${path}`);
+    }
+    
+    // Otherwise serve index.html for SPA
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Start server
 async function start() {
     await initDocsRepo();

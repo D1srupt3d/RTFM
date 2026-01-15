@@ -1,0 +1,37 @@
+name: Cleanup Old Images and Artifacts
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  cleanup-images:
+    name: Delete old container images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete old container images
+        uses: snok/container-retention-policy@v2
+        with:
+          image-names: rtfm
+          cut-off: 1 week ago UTC
+          keep-at-least: 3
+          untagged-only: true
+          skip-tags: latest
+          account-type: personal
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup-artifacts:
+    name: Delete old workflow artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '1 week'
+          skip-recent: 3

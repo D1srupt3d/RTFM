@@ -1,7 +1,7 @@
 services:
   rtfm:
-    #image: ghcr.io/d1srupt3d/rtfm:latest # uncomment if you want to use the pre-built image from GitHub Container Registry
-    build: . # uncomment if you want to build the image locally
+    image: ghcr.io/d1srupt3d/rtfm:latest # uncomment if you want to use the pre-built image from GitHub Container Registry
+    #build: . # uncomment if you want to build the image locally
     container_name: rtfm
     ports:
       - "3000:3000"

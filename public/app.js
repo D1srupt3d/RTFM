@@ -9,11 +9,12 @@ async function init() {
     await loadConfig();
     await loadNavigation();
     setupEventListeners();
+    loadSyntaxTheme();
     
-    // Load initial doc from URL hash, index, or first doc
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-        loadDocument(hash);
+    // Load initial doc from URL path, index, or first doc
+    const path = window.location.pathname.slice(1); // Remove leading slash
+    if (path) {
+        loadDocument(path);
     } else {
         // Try to load index.md first, fall back to first document
         const indexExists = await fetch('/api/doc/index').then(r => r.ok).catch(() => false);
@@ -54,7 +55,13 @@ function applyConfig() {
     
     // Add custom links to footer
     const footer = document.getElementById('sidebar-footer');
+    
+    // Preserve the theme selector
+    const themeSelector = footer.querySelector('.theme-selector');
     footer.innerHTML = '';
+    if (themeSelector) {
+        footer.appendChild(themeSelector);
+    }
     
     if (config.links) {
         if (config.links.github) {
@@ -188,7 +195,9 @@ function renderNavigation(items, parentElement = null) {
 async function loadDocument(path) {
     try {
         currentDoc = path;
-        window.location.hash = path;
+        // Update URL without hash using History API
+        const url = path === 'index' ? '/' : `/${path}`;
+        window.history.pushState({ path }, '', url);
         
         // Update active state in nav
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -211,6 +220,12 @@ async function loadDocument(path) {
         const doc = await response.json();
         const contentElement = document.getElementById('doc-content');
         contentElement.innerHTML = doc.html;
+        
+        // Highlight code blocks
+        highlightCode();
+        
+        // Fix internal .md links
+        fixInternalLinks(path);
         
         // Add copy buttons to code blocks
         addCopyButtons();
@@ -238,7 +253,7 @@ async function loadDocument(path) {
         // If document not found, redirect to homepage
         if (error.message === 'Document not found') {
             console.log('Document not found, redirecting to homepage...');
-            window.location.hash = 'index';
+            window.history.pushState({ path: 'index' }, '', '/');
             loadDocument('index');
         } else {
             document.getElementById('doc-content').innerHTML = `
@@ -246,7 +261,7 @@ async function loadDocument(path) {
                     <div class="error-icon">📄</div>
                     <h1>Document Not Found</h1>
                     <p>The page you're looking for doesn't exist.</p>
-                    <button onclick="window.location.hash='index'" class="home-button">
+                    <button onclick="window.history.pushState({path:'index'},'','/'); window.location.reload();" class="home-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -313,6 +328,7 @@ function setupEventListeners() {
     const searchResults = document.getElementById('search-results');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebar = document.querySelector('.sidebar');
+    const themeSelector = document.getElementById('code-theme');
     
     // Search
     searchInput.addEventListener('input', (e) => {
@@ -348,11 +364,19 @@ function setupEventListeners() {
         }
     });
     
+    // Theme selector
+    if (themeSelector) {
+        themeSelector.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            setSyntaxTheme(theme);
+        });
+    }
+    
     // Handle browser back/forward
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash.slice(1);
-        if (hash && hash !== currentDoc) {
-            loadDocument(hash);
+    window.addEventListener('popstate', (e) => {
+        const path = window.location.pathname.slice(1) || 'index';
+        if (path !== currentDoc) {
+            loadDocument(path);
         }
     });
     
@@ -619,6 +643,101 @@ function showLastModified(time) {
     `;
     
     content.appendChild(timestamp);
+}
+
+// Fix internal links to work with hash-based routing
+function fixInternalLinks(currentPath) {
+    const content = document.getElementById('doc-content');
+    const links = content.querySelectorAll('a[href]');
+    
+    links.forEach(link => {
+        const href = link.getAttribute('href');
+        
+        // Skip external links, anchors, and mailto links
+        if (!href || 
+            href.startsWith('http://') || 
+            href.startsWith('https://') || 
+            href.startsWith('#') ||
+            href.startsWith('mailto:')) {
+            return;
+        }
+        
+        let rtfmPath = href;
+        
+        // Remove .md extension if present
+        if (rtfmPath.endsWith('.md')) {
+            rtfmPath = rtfmPath.slice(0, -3);
+        }
+        
+        // Handle relative paths
+        if (rtfmPath.startsWith('../') || rtfmPath.startsWith('./')) {
+            // Get the current directory
+            const pathParts = currentPath.split('/');
+            pathParts.pop(); // Remove current file
+            
+            // Process relative path
+            const relativeParts = rtfmPath.split('/');
+            relativeParts.forEach(part => {
+                if (part === '..') {
+                    pathParts.pop();
+                } else if (part !== '.' && part !== '') {
+                    pathParts.push(part);
+                }
+            });
+            
+            rtfmPath = pathParts.join('/');
+        } else if (!rtfmPath.includes('/')) {
+            // Same directory link (no slashes)
+            const pathParts = currentPath.split('/');
+            if (pathParts.length > 0 && pathParts[0] !== 'index') {
+                pathParts.pop(); // Remove current file
+                pathParts.push(rtfmPath);
+                rtfmPath = pathParts.join('/');
+            }
+        }
+        // else: Full path like "infrastructure/overview" - already correct
+        
+        // Update link to use clean URL navigation
+        const cleanUrl = rtfmPath === 'index' ? '/' : `/${rtfmPath}`;
+        link.setAttribute('href', cleanUrl);
+        
+        // Add click handler to prevent default and load document
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadDocument(rtfmPath);
+        });
+    });
+}
+
+// Syntax highlighting
+function highlightCode() {
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+    });
+}
+
+function loadSyntaxTheme() {
+    const savedTheme = localStorage.getItem('codeTheme') || 'tokyo-night-dark';
+    const themeSelector = document.getElementById('code-theme');
+    if (themeSelector) {
+        themeSelector.value = savedTheme;
+    }
+    setSyntaxTheme(savedTheme, false);
+}
+
+function setSyntaxTheme(theme, save = true) {
+    const link = document.getElementById('highlight-theme');
+    const newHref = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${theme}.min.css`;
+    
+    // Force CSS reload
+    link.href = '';
+    setTimeout(() => {
+        link.href = newHref;
+    }, 10);
+    
+    if (save) {
+        localStorage.setItem('codeTheme', theme);
+    }
 }
 
 // Start the app

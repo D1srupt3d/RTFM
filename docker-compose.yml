@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rtfm:
     # image: ghcr.io/d1srupt3d/rtfm:latest # uncomment if you want to use the pre-built image from GitHub Container Registry

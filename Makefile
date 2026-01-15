@@ -1,6 +1,6 @@
 # RTFM Makefile
 
-.PHONY: help install dev build up down restart logs config clean
+.PHONY: help install dev build up down restart logs config clean hooks
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -10,6 +10,13 @@ help: ## Show this help message
 
 install: ## Install dependencies
 	npm install
+
+hooks: ## Install git hooks (secrets check)
+	@echo "Installing git hooks..."
+	@cp .git-hooks/pre-commit .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "✅ Pre-commit hook installed!"
+	@echo "   Secrets will be checked before every commit"
 
 dev: ## Run in development mode with auto-reload
 	npm run dev

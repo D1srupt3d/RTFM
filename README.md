@@ -174,7 +174,28 @@ location / {
 ```bash
 npm install
 npm run dev
+
+# Install git hooks (secrets check before commit)
+make hooks
 ```
+
+### Security: Pre-Commit Secrets Check
+
+RTFM includes a pre-commit hook to prevent accidentally committing sensitive data:
+
+```bash
+make hooks  # Install once per clone
+# Now every commit is checked for secrets automatically
+```
+
+The hook detects:
+- Private keys
+- API keys, tokens, passwords
+- GitHub Personal Access Tokens
+- AWS credentials
+- `.env` files
+
+If secrets are detected, the commit is blocked. To bypass (not recommended): `git commit --no-verify`
 
 ## Troubleshooting
 

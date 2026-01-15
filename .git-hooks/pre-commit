@@ -1,0 +1,59 @@
+#!/bin/bash
+# Pre-commit hook to check for secrets
+
+echo "🔍 Checking for secrets before commit..."
+
+# Check for common secret patterns
+SECRETS_FOUND=0
+
+# Get staged files, excluding the hook itself and templates
+STAGED_FILES=$(git diff --cached --name-only | grep -v "^\.git-hooks/" | grep -v "env.template")
+
+# Exit early if no files to check
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ No files to check."
+    exit 0
+fi
+
+# Check for private keys
+if git diff --cached -- $STAGED_FILES 2>/dev/null | grep -i "BEGIN.*PRIVATE KEY"; then
+    echo "❌ ERROR: Private key detected!"
+    SECRETS_FOUND=1
+fi
+
+# Check for common secret patterns (skip hook files and templates)
+if git diff --cached -- $STAGED_FILES 2>/dev/null | grep -E "(password|passwd|pwd|secret|api_key|apikey|token|auth)[[:space:]]*[:=][[:space:]]*['\"][^'\"]+['\"]"; then
+    echo "❌ ERROR: Potential secret detected!"
+    echo "   Found assignment pattern like: password='value'"
+    SECRETS_FOUND=1
+fi
+
+# Check for GitHub tokens
+if git diff --cached -- $STAGED_FILES 2>/dev/null | grep -E "ghp_[a-zA-Z0-9]{36}"; then
+    echo "❌ ERROR: GitHub Personal Access Token detected!"
+    SECRETS_FOUND=1
+fi
+
+# Check for AWS keys
+if git diff --cached -- $STAGED_FILES 2>/dev/null | grep -E "AKIA[0-9A-Z]{16}"; then
+    echo "❌ ERROR: AWS Access Key detected!"
+    SECRETS_FOUND=1
+fi
+
+# Check for .env files (but allow env.template)
+if echo "$STAGED_FILES" | grep -E "^\.env$"; then
+    echo "⚠️  WARNING: .env file is being committed!"
+    echo "   Make sure this is intentional (should usually be in .gitignore)"
+    SECRETS_FOUND=1
+fi
+
+if [ $SECRETS_FOUND -eq 1 ]; then
+    echo ""
+    echo "❌ Commit blocked! Secrets detected."
+    echo "   Review your changes and remove sensitive data."
+    echo "   To bypass this check (not recommended): git commit --no-verify"
+    exit 1
+fi
+
+echo "✅ No secrets detected. Proceeding with commit."
+exit 0

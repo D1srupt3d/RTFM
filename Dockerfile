@@ -5,13 +5,13 @@ RUN apk add --no-cache git openssh-client
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first (only rebuilds if dependencies change)
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies (cached unless package*.json changes)
 RUN npm ci --only=production
 
-# Copy application files
+# Copy application files (rebuilds if code changes)
 COPY server.js ./
 COPY config.js ./
 COPY public ./public

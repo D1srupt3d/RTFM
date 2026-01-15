@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          prerelease: ${{ startsWith(github.ref, 'refs/tags/v0.') }}
+          body: |
+            ## Installation
+            
+            ```bash
+            docker pull ghcr.io/d1srupt3d/rtfm:${{ github.ref_name }}
+            ```
+            
+            See [README](https://github.com/${{ github.repository }}#setup) for setup instructions.

@@ -495,6 +495,7 @@ function generateTOC() {
         const link = document.createElement('a');
         link.href = `#${id}`;
         link.textContent = heading.textContent;
+        link.dataset.target = id;
         link.addEventListener('click', (e) => {
             e.preventDefault();
             heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -508,6 +509,37 @@ function generateTOC() {
     
     // Insert TOC as floating sidebar on the right
     document.querySelector('.content').appendChild(toc);
+    
+    // Setup intersection observer for active highlighting
+    setupTOCHighlighting(headings);
+}
+
+// Highlight active TOC item on scroll
+function setupTOCHighlighting(headings) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const id = entry.target.id;
+            const tocLink = document.querySelector(`.toc-list a[data-target="${id}"]`);
+            
+            if (entry.isIntersecting) {
+                // Remove active from all
+                document.querySelectorAll('.toc-list a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                // Add active to current
+                if (tocLink) {
+                    tocLink.classList.add('active');
+                }
+            }
+        });
+    }, {
+        rootMargin: '-100px 0px -66%',
+        threshold: 0
+    });
+    
+    headings.forEach(heading => {
+        observer.observe(heading);
+    });
 }
 
 // Show last modified time

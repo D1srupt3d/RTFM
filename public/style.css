@@ -742,10 +742,19 @@ body {
     display: block;
     font-size: 12px;
     line-height: 1.5;
+    border-left: 2px solid transparent;
+    padding-left: 8px;
+    margin-left: -8px;
 }
 
 .toc-item a:hover {
     color: var(--color-primary);
+}
+
+.toc-item a.active {
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+    font-weight: 500;
 }
 
 .toc-h3 {
@@ -755,6 +764,10 @@ body {
 
 .toc-h3 a {
     opacity: 0.7;
+}
+
+.toc-h3 a.active {
+    opacity: 1;
 }
 
 /* Hide TOC on smaller screens */

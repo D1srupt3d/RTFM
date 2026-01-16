@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.4.0] - 2026-01-16
+## [0.4.0] - 2026-01-15
 
 ### Added
 - **Fuzzy search** with fuzzysort library
@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - Search now uses fuzzy matching algorithm instead of exact substring matching
 - Improved search performance and accuracy
 
-## [0.3.4] - 2026-01-16
+## [0.3.4] - 2026-01-15
 
 ### Added
 - Package cleanup workflow to keep only 10 most recent container versions
@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
 - Logo now displays above tagline for better readability
 - Centered logo and tagline alignment
 
-## [0.3.3] - 2026-01-16
+## [0.3.3] - 2026-01-15
 
 ### Added
 - **New Branding**: RTFM# logo with purple accent
@@ -36,18 +36,18 @@ All notable changes to this project will be documented in this file.
 - Updated default logo from 📚 emoji to "RTFM#" text logo
 - Expanded ROADMAP with future feature ideas
 
-## [0.3.2] - 2026-01-16
+## [0.3.2] - 2026-01-15
 
 ### Fixed
 - Fixed Mermaid diagrams not rendering due to highlight.js interference
 - Excluded `.language-mermaid` blocks from syntax highlighting
 
-## [0.3.1] - 2026-01-16
+## [0.3.1] - 2026-01-15
 
 ### Fixed
 - Fixed Docker workflow to properly tag `latest` on version releases
 
-## [0.3.0] - 2026-01-16
+## [0.3.0] - 2026-01-15
 
 ### Added
 - **Mermaid Diagram Support**: Render diagrams directly from markdown code blocks

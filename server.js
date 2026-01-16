@@ -65,7 +65,7 @@ try {
     config = require('./config.js');
 } catch (error) {
     config = {
-        site: { title: 'RTFM', tagline: 'Read The F***ing Manual', logo: '📚' },
+        site: { title: 'RTFM', tagline: 'Read The F***ing Manual', logo: 'RTFM' },
         links: {}
     };
 }

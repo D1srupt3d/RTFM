@@ -262,6 +262,13 @@ body {
     flex-shrink: 0;
 }
 
+.logo-svg {
+    width: 160px;
+    height: 48px;
+    margin-right: 0;
+    color: var(--color-text);
+}
+
 .logo-text {
     flex: 1;
     min-width: 0;

@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.3] - 2026-01-16
+
+### Added
+- **New Branding**: RTFM# logo with purple accent
+- **Favicon**: R# icon in purple for browser tabs
+- **Sidebar Logo**: SVG logo with monospace font styling
+- **README Banner**: Centered logo with subtitle
+
+### Changed
+- Updated default logo from 📚 emoji to "RTFM#" text logo
+- Expanded ROADMAP with future feature ideas
+
+## [0.3.2] - 2026-01-16
+
+### Fixed
+- Fixed Mermaid diagrams not rendering due to highlight.js interference
+- Excluded `.language-mermaid` blocks from syntax highlighting
+
+## [0.3.1] - 2026-01-16
+
+### Fixed
+- Fixed Docker workflow to properly tag `latest` on version releases
+
 ## [0.3.0] - 2026-01-16
 
 ### Added

@@ -1,0 +1,22 @@
+<svg width="512" height="192" viewBox="0 0 512 192"
+     xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="192" fill="#0d1117"/>
+
+  <text x="256" y="120"
+        text-anchor="middle"
+        font-family="JetBrains Mono, SFMono-Regular, Menlo, monospace"
+        font-size="96"
+        font-weight="700"
+        dominant-baseline="alphabetic"
+        fill="#c9d1d9">
+    RTFM<tspan fill="#a78bfa">#</tspan>
+  </text>
+
+  <text x="256" y="156"
+        text-anchor="middle"
+        font-family="JetBrains Mono, SFMono-Regular, Menlo, monospace"
+        font-size="18"
+        fill="#8b949e">
+    self-hosted markdown documentation
+  </text>
+</svg>

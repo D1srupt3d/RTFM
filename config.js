@@ -2,7 +2,7 @@ module.exports = {
   site: {
     title: 'RTFM',
     tagline: 'Read The F***ing Manual',
-    logo: '📚'
+    logo: 'RTFM'
   },
   links: {
     github: '',

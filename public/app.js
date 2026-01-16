@@ -34,7 +34,7 @@ async function loadConfig() {
     } catch (error) {
         console.error('Failed to load config:', error);
         config = {
-            site: { title: 'RTFM', tagline: 'Documentation', logo: '📚' },
+            site: { title: 'RTFM', tagline: 'Documentation', logo: 'RTFM' },
             links: {}
         };
     }
@@ -43,7 +43,7 @@ async function loadConfig() {
 function applyConfig() {
     document.getElementById('site-title').textContent = config.site?.title || 'RTFM';
     document.getElementById('site-tagline').textContent = config.site?.tagline || 'Documentation';
-    document.getElementById('logo-icon').textContent = config.site?.logo || '📚';
+    document.getElementById('logo-icon').textContent = config.site?.logo || 'RTFM';
     document.title = config.site?.title || 'RTFM';
     
     const footer = document.getElementById('sidebar-footer');

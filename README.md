@@ -1,6 +1,8 @@
-# Read the F***ing Manual
-
-Self-hosted documentation server. Serves markdown files from Git with search, syntax highlighting, and a clean interface.
+<div align="center">
+  <img src="logo.svg" alt="RTFM" width="512">
+  <br><br>
+  <p><strong>Serves markdown files from Git with search, syntax highlighting, and a clean interface.</strong></p>
+</div>
 
 ![RTFM Screenshot](screenshot.png)
 
@@ -93,7 +95,7 @@ Planned for v0.4.0+:
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.3.0).
+PRs and issues welcome. Project is in active development (currently v0.3.3).
 
 ## Example Documentation
 

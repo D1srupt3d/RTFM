@@ -87,6 +87,51 @@ Notify users when docs are updated:
 - Recently viewed pages
 - Page history sidebar
 
+### Theme Enhancements
+- Auto theme detection based on system preference (`prefers-color-scheme`)
+- Custom theme builder UI (color picker for creating themes)
+- Per-document theme overrides via frontmatter
+
+### Export & Sharing
+- Export docs to PDF
+- Generate static HTML site
+- Share individual docs via shareable links
+- Markdown export with all assets
+
+### Collaboration Features
+- Comments/annotations on docs (stored in git)
+- Suggested edits workflow
+- Change tracking and history viewer
+- Multi-user edit notifications
+
+### Advanced Search
+- Search filters (by date, author, tags)
+- Search within specific folders
+- Regex search support
+- Search history and saved searches
+
+### Content Features
+- Code execution/playgrounds (sandboxed)
+- Interactive examples and demos
+- Embedded video/audio support
+- LaTeX/Math equation rendering
+- Collapsible sections
+- Tabs and accordion components
+
+### Integration & API
+- Webhook support for external updates
+- REST API for programmatic access
+- Slack/Discord notifications
+- CI/CD integration for doc validation
+- OpenAPI/Swagger integration
+
+### Performance & Scale
+- Document caching layer
+- Lazy loading for large docs
+- CDN support for assets
+- Full-text search with Elasticsearch
+- Multi-repository support
+
 ---
 
 ## Contributing

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-01-16
+
+### Added
+- **Fuzzy search** with fuzzysort library
+- Typo tolerance (e.g., "kuberntes" finds "kubernetes")
+- Partial matching (e.g., "dkr" finds "docker")
+- Better search relevance scoring
+
+### Changed
+- Search now uses fuzzy matching algorithm instead of exact substring matching
+- Improved search performance and accuracy
+
 ## [0.3.4] - 2026-01-16
 
 ### Added

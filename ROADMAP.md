@@ -52,14 +52,12 @@ Unified site-wide themes with coordinated syntax highlighting:
 
 ---
 
-## 🚧 In Progress
+## ✅ Completed (continued)
 
-### Better Search
-Current: Basic full-text search
-Planned enhancements:
-- Fuzzy matching (typo tolerance)
-- Search result snippets with highlighting
-- Search within code blocks
+### Better Search (v0.4.0)
+- **Fuzzy matching** - Typo tolerance and partial matching with fuzzysort
+- **Relevance scoring** - Better ranked results
+- **Content search** - Searches both titles and document content
 
 ---
 

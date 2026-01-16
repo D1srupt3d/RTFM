@@ -7,6 +7,7 @@ const matter = require('gray-matter');
 const { glob } = require('glob');
 const { exec } = require('child_process');
 const util = require('util');
+const fuzzysort = require('fuzzysort');
 
 const execPromise = util.promisify(exec);
 
@@ -213,9 +214,9 @@ async function getMarkdownContent(filePath) {
 
 async function searchDocs(query) {
     const files = await getMarkdownFiles();
-    const results = [];
-    const lowerQuery = query.toLowerCase();
-
+    const documents = [];
+    
+    // First, build an array of all documents with their content
     for (const file of files) {
         try {
             const fullPath = path.join(DOCS_DIR, file);
@@ -223,35 +224,33 @@ async function searchDocs(query) {
             const { data: frontmatter, content: markdown } = matter(content);
             
             const title = frontmatter.title || file.replace('.md', '').replace(/-/g, ' ');
-            const lines = markdown.split('\n');
+            const preview = markdown.split('\n').slice(0, 3).join(' ').substring(0, 200);
             
-            if (title.toLowerCase().includes(lowerQuery)) {
-                results.push({
-                    title,
-                    path: file.replace('.md', ''),
-                    preview: lines.slice(0, 3).join(' ').substring(0, 200)
-                });
-                continue;
-            }
-            
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i].toLowerCase().includes(lowerQuery)) {
-                    const start = Math.max(0, i - 1);
-                    const end = Math.min(lines.length, i + 2);
-                    results.push({
-                        title,
-                        path: file.replace('.md', ''),
-                        preview: lines.slice(start, end).join(' ').substring(0, 200)
-                    });
-                    break;
-                }
-            }
+            documents.push({
+                title,
+                path: file.replace('.md', ''),
+                preview,
+                content: markdown // for searching content too
+            });
         } catch (error) {
-            console.error(`Error searching file ${file}:`, error);
+            console.error(`Error reading file ${file}:`, error);
         }
     }
-
-    return results;
+    
+    // Use fuzzysort to search titles and content
+    const results = fuzzysort.go(query, documents, {
+        keys: ['title', 'content'],
+        limit: 10,
+        threshold: -10000, // Lower = more lenient matching
+        all: false
+    });
+    
+    // Map results back to the format your frontend expects
+    return results.map(result => ({
+        title: result.obj.title,
+        path: result.obj.path,
+        preview: result.obj.preview
+    }));
 }
 
 app.get('/api/config', (req, res) => {

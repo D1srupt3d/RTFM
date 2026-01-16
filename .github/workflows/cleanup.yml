@@ -18,3 +18,17 @@ jobs:
         with:
           age: '1 week'
           skip-recent: 3
+  
+  cleanup-packages:
+    name: Delete old container images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete old container images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'rtfm'
+          package-type: 'container'
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: 'false'

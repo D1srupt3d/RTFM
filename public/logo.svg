@@ -1,6 +1,7 @@
-<svg width="160" height="48" viewBox="0 0 160 48"
+<svg width="120" height="48" viewBox="0 0 120 48"
      xmlns="http://www.w3.org/2000/svg">
-  <text x="8" y="34"
+  <text x="60" y="32"
+        text-anchor="middle"
         font-family="JetBrains Mono, SFMono-Regular, Menlo, Consolas, monospace"
         font-size="28"
         font-weight="700"

@@ -95,7 +95,7 @@ Planned for v0.4.0+:
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.3.3).
+PRs and issues welcome. Project is in active development (currently v0.3.4).
 
 ## Example Documentation
 

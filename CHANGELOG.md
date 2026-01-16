@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.4] - 2026-01-16
+
+### Added
+- Package cleanup workflow to keep only 10 most recent container versions
+
+### Fixed
+- Fixed sidebar logo layout to stack vertically
+- Logo now displays above tagline for better readability
+- Centered logo and tagline alignment
+
 ## [0.3.3] - 2026-01-16
 
 ### Added

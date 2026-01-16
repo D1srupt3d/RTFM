@@ -23,6 +23,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+.cursorrules
 
 # Local config overrides
 config.local.js

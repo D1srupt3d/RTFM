@@ -616,7 +616,7 @@ function fixInternalLinks(currentPath) {
 }
 
 function highlightCode() {
-    document.querySelectorAll('pre code').forEach((block) => {
+    document.querySelectorAll('pre code:not(.language-mermaid)').forEach((block) => {
         hljs.highlightElement(block);
 
         // Add language badge

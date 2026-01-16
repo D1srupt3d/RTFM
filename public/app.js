@@ -200,6 +200,7 @@ async function loadDocument(path) {
         contentElement.innerHTML = doc.html;
         
         highlightCode();
+        renderMermaid();
         fixInternalLinks(path);
         addCopyButtons();
         makeCodeBlocksCollapsible();
@@ -617,13 +618,13 @@ function fixInternalLinks(currentPath) {
 function highlightCode() {
     document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
-        
+
         // Add language badge
         const pre = block.parentElement;
         if (pre && !pre.querySelector('.language-badge')) {
-            const lang = block.className.match(/language-(\w+)/)?.[1] || 
+            const lang = block.className.match(/language-(\w+)/)?.[1] ||
                         block.result?.language;
-            
+
             if (lang && lang !== 'plaintext') {
                 const badge = document.createElement('div');
                 badge.className = 'language-badge';
@@ -633,6 +634,115 @@ function highlightCode() {
         }
     });
 }
+
+function renderMermaid() {
+    // Initialize Mermaid with theme settings
+    const currentTheme = localStorage.getItem('siteTheme') || 'dark';
+    const isDark = !['light', 'catppuccin-latte', 'solarized-light'].includes(currentTheme);
+    
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: 'var(--font-mono, monospace)',
+        flowchart: { useMaxWidth: false },
+        sequence: { useMaxWidth: false }
+    });
+
+    // Find and render Mermaid diagrams
+    document.querySelectorAll('pre code.language-mermaid').forEach(async (block, index) => {
+        const code = block.textContent;
+        const pre = block.parentElement;
+        
+        try {
+            // Create unique ID for this diagram
+            const id = `mermaid-${Date.now()}-${index}`;
+            
+            // Render the diagram
+            const { svg } = await mermaid.render(id, code);
+            
+            // Replace the code block with the rendered SVG
+            const container = document.createElement('div');
+            container.className = 'mermaid-diagram';
+            container.innerHTML = svg;
+            pre.replaceWith(container);
+            
+            // Add zoom functionality
+            addZoomControls(container);
+        } catch (error) {
+            console.error('Mermaid rendering error:', error);
+            // Leave the code block as-is if rendering fails
+            const badge = document.createElement('div');
+            badge.className = 'language-badge';
+            badge.textContent = 'mermaid';
+            pre.appendChild(badge);
+        }
+    });
+}
+
+function addZoomControls(container) {
+    const svg = container.querySelector('svg');
+    if (!svg) return;
+
+    // Add expand indicator
+    const expandBtn = document.createElement('button');
+    expandBtn.className = 'mermaid-expand-btn';
+    expandBtn.innerHTML = '⛶';
+    expandBtn.title = 'Click to expand';
+    container.appendChild(expandBtn);
+
+    // Click to expand
+    const expand = () => {
+        // Create fullscreen overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'mermaid-fullscreen-overlay';
+        
+        const fullContainer = document.createElement('div');
+        fullContainer.className = 'mermaid-fullscreen-container';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'mermaid-close-btn';
+        closeBtn.innerHTML = '✕';
+        closeBtn.title = 'Close (ESC)';
+        
+        const svgClone = svg.cloneNode(true);
+        fullContainer.appendChild(svgClone);
+        fullContainer.appendChild(closeBtn);
+        overlay.appendChild(fullContainer);
+        document.body.appendChild(overlay);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            overlay.classList.add('active');
+        });
+
+        // Close handlers
+        const close = () => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 300);
+        };
+
+        closeBtn.addEventListener('click', close);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) close();
+        });
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                close();
+                document.removeEventListener('keydown', escHandler);
+            }
+        });
+    };
+
+    expandBtn.addEventListener('click', expand);
+    container.style.cursor = 'pointer';
+    container.addEventListener('click', (e) => {
+        if (e.target !== expandBtn && e.target.closest('.mermaid-diagram') === container) {
+            expand();
+        }
+    });
+}
+
 
 function loadSyntaxTheme() {
     const savedTheme = localStorage.getItem('siteTheme') || 'dark';

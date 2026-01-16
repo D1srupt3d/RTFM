@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-01-16
+
+### Added
+- **Mermaid Diagram Support**: Render diagrams directly from markdown code blocks
+  - Flowcharts for documenting processes and workflows
+  - Sequence diagrams for API interactions
+  - Infrastructure/network diagrams for system topology
+  - Class diagrams for code structure
+  - State diagrams for system states
+  - Entity-relationship diagrams for database schemas
+  - Timeline diagrams for project milestones
+  - Gantt charts for project planning
+  - Git graphs for branching strategies
+- **Theme-Aware Diagrams**: Mermaid diagrams automatically adapt to the selected site theme
+- **Example Documentation**: New `diagrams.md` page showcasing all Mermaid diagram types
+
+### Changed
+- Updated roadmap to reflect Mermaid completion and plan for v0.4.0+
+
+## [0.2.3] - 2026-01-15
+
+### Changed
+- Made documentation more universal and less homelab-specific
+- Expanded use cases to include teams, projects, and personal documentation
+- Updated package keywords for better discoverability (added "self-hosted", "git")
+- Improved Docker image description
+
 ## [0.2.2] - 2026-01-15
 
 ### Fixed

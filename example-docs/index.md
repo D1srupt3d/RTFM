@@ -22,7 +22,8 @@ This is an example documentation site. To use RTFM with your own docs:
 
 Check out these example pages to see what RTFM can do:
 
-- [Syntax Test](syntax-test) - Showcase of syntax highlighting across 15+ languages
+- [Syntax Test](syntax-test) - Showcase of syntax highlighting across 16+ languages
+- [Mermaid Diagrams](diagrams) - Flowcharts, sequence diagrams, infrastructure maps, and more
 
 ## Documentation Structure
 
@@ -40,6 +41,22 @@ docs/
 └── reference/
     └── api.md
 ```
+
+## Mermaid Diagrams
+
+Visualize workflows, architectures, and processes with Mermaid:
+
+```mermaid
+graph LR
+    A[Write Docs] --> B[Push to Git]
+    B --> C[RTFM Auto-Updates]
+    C --> D[Team Reads Docs]
+    D --> E{Questions?}
+    E -->|Yes| A
+    E -->|No| F[Success!]
+```
+
+Check out the [full diagrams page](diagrams) for flowcharts, sequence diagrams, infrastructure maps, and more.
 
 ## Markdown Tips
 

@@ -14,6 +14,7 @@ Managing documentation shouldn't be complicated. MkDocs requires build steps and
 - **14 Themes** - Dark, Light, Catppuccin, Nord, Dracula, Monokai, Solarized, and more
 - **Full-text Search** - Keyboard shortcut (Ctrl+K) to search across all documentation
 - **Syntax Highlighting** - 16+ languages with copy buttons, language badges, and auto-detection
+- **Mermaid Diagrams** - Flowcharts, sequence diagrams, infrastructure maps, and more
 - **Auto-generated Navigation** - Sidebar builds from your folder structure
 - **Mobile Responsive** - Works on phones and tablets
 - **Private Repos** - Supports GitHub personal access tokens
@@ -29,7 +30,9 @@ cp env.template .env
 docker-compose up -d
 ```
 
-The `example-docs/` folder contains sample documentation including a [syntax highlighting test page](example-docs/syntax-test.md) showcasing 16+ languages.
+The `example-docs/` folder contains sample documentation including:
+- [Syntax highlighting test](example-docs/syntax-test.md) showcasing 16+ languages
+- [Mermaid diagrams](example-docs/diagrams.md) with flowcharts, sequence diagrams, and more
 
 ## Config
 
@@ -82,21 +85,22 @@ npm run dev
 
 ## Roadmap
 
-Planned for v0.3.0+:
+Planned for v0.4.0+:
 
-- Mermaid diagram support for infrastructure diagrams
 - Enhanced search with fuzzy matching
 - Document templates
+- Auto-refresh on documentation updates
 
 ## Contributing
 
-PRs and issues welcome. Project is in active development (currently v0.2.3).
+PRs and issues welcome. Project is in active development (currently v0.3.0).
 
 ## Example Documentation
 
 The `example-docs/` folder contains sample documentation including:
 - Welcome page with quick start guide
 - [Syntax highlighting test](example-docs/syntax-test.md) showcasing 16+ languages
+- [Mermaid diagrams](example-docs/diagrams.md) showcasing flowcharts, sequence diagrams, and more
 
 Use these as templates for your own documentation.
 
@@ -111,6 +115,7 @@ AI assistance (Claude) was used for:
 - GitHub Actions workflows
 - Search feature
 - Syntax highlighting enhancements (v0.2.0)
+- Mermaid diagram integration (v0.3.0)
 
 ## License
 

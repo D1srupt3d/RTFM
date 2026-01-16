@@ -923,6 +923,154 @@ body {
     backdrop-filter: blur(4px);
 }
 
+/* Mermaid Diagrams */
+.mermaid-diagram {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 16px 0;
+    overflow: auto;
+    position: relative;
+    max-height: 600px;
+    width: 100%;
+}
+
+.mermaid-diagram svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.15s ease;
+}
+
+/* Expand Button */
+.mermaid-expand-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    opacity: 0.7;
+}
+
+.mermaid-expand-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    border-color: var(--color-primary);
+    opacity: 1;
+}
+
+/* Fullscreen Overlay */
+.mermaid-fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.mermaid-fullscreen-overlay.active {
+    opacity: 1;
+}
+
+.mermaid-fullscreen-container {
+    position: relative;
+    max-width: 95vw;
+    max-height: 95vh;
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 40px;
+    overflow: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.mermaid-fullscreen-overlay.active .mermaid-fullscreen-container {
+    transform: scale(1);
+}
+
+.mermaid-fullscreen-container svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.mermaid-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.mermaid-close-btn:hover {
+    background: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+    transform: rotate(90deg);
+}
+
+/* Scrollbar styling for diagram containers */
+.mermaid-diagram::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.mermaid-diagram::-webkit-scrollbar-track {
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+}
+
+.mermaid-diagram::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+}
+
+.mermaid-diagram::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+/* Mermaid adapts colors based on theme */
+.mermaid-diagram .node rect,
+.mermaid-diagram .node circle,
+.mermaid-diagram .node ellipse,
+.mermaid-diagram .node polygon {
+    fill: var(--color-bg-tertiary) !important;
+    stroke: var(--color-primary) !important;
+}
+
+.mermaid-diagram .edgeLabel {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text) !important;
+}
+
 /* Copy Button */
 .copy-button {
     position: absolute;

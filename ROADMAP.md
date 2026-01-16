@@ -32,6 +32,11 @@ Unified site-wide themes with coordinated syntax highlighting:
 - **Line preservation** - Proper formatting maintained
 - **Syntax detection** - Auto-detects language from markdown
 
+### Diagrams (v0.3.0)
+- **Mermaid support** - Flowcharts, sequence diagrams, infrastructure maps
+- **Theme integration** - Diagrams adapt to site theme
+- **Multiple types** - Flowcharts, sequences, Gantt, ERD, state machines, timelines
+
 ### Mobile Responsive
 - **Hamburger menu** - Collapsible navigation on mobile
 - **Touch-friendly** - Proper tap targets and gestures
@@ -59,13 +64,6 @@ Planned enhancements:
 ---
 
 ## 📋 Planned
-
-### Mermaid Diagram Support
-Render diagrams directly from markdown:
-- Flowcharts
-- Network diagrams
-- Infrastructure topology
-- Just add mermaid.js library
 
 ### Document Templates
 Pre-formatted docs for common scenarios:

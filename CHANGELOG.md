@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.5.0] - 2026-01-15
+## [0.5.0] - 2026-01-17
 
 ### Added
 - **Edit Button** - "Edit this page" link on every doc (opens GitHub/GitLab editor)

@@ -59,76 +59,105 @@ Unified site-wide themes with coordinated syntax highlighting:
 - **Relevance scoring** - Better ranked results
 - **Content search** - Searches both titles and document content
 
----
-
-## 📋 Planned
-
-### Document Templates
-Pre-formatted docs for common scenarios:
-- Server setup template
-- Troubleshooting template
-- Configuration template
-- Via frontmatter or special syntax
+### Navigation & Productivity (v0.5.0)
+- **Edit Button** - One-click to fix docs on GitHub/GitLab
+- **Keyboard Navigation** - j/k for next/prev, / for search, arrows in results
+- **Enter to select** - Navigate search results without mouse
 
 ---
 
-## 💭 Future Ideas
+## 📋 Roadmap
+*(All features sorted easiest → hardest)*
 
-### Auto-Refresh on Updates
-Notify users when docs are updated:
-- Poll `/api/commit` endpoint
-- Toast notification on changes
-- "Refresh to see latest" button
+---
 
-### Enhanced Navigation
-- "Related Docs" based on internal links
-- Recently viewed pages
-- Page history sidebar
+### 🟢 Easy (Quick Wins)
 
-### Theme Enhancements
-- Auto theme detection based on system preference (`prefers-color-scheme`)
-- Custom theme builder UI (color picker for creating themes)
-- Per-document theme overrides via frontmatter
+**Last Updated Timestamp**
+- Show git commit date per doc
+- Display author who last edited
+- Already have git data, just display it
 
-### Export & Sharing
-- Export docs to PDF
-- Generate static HTML site
-- Share individual docs via shareable links
-- Markdown export with all assets
+**Theme Auto-Detection**
+- Respect system `prefers-color-scheme`
+- CSS media query, no JS needed
 
-### Collaboration Features
-- Comments/annotations on docs (stored in git)
-- Suggested edits workflow
-- Change tracking and history viewer
-- Multi-user edit notifications
+**Health Endpoint**
+- `/health` for monitoring tools
+- Simple status route
 
-### Advanced Search
-- Search filters (by date, author, tags)
-- Search within specific folders
-- Regex search support
-- Search history and saved searches
+---
 
-### Content Features
-- Code execution/playgrounds (sandboxed)
-- Interactive examples and demos
-- Embedded video/audio support
-- LaTeX/Math equation rendering
-- Collapsible sections
-- Tabs and accordion components
+### 🟡 Medium (Some Work)
 
-### Integration & API
-- Webhook support for external updates
-- REST API for programmatic access
-- Slack/Discord notifications
-- CI/CD integration for doc validation
-- OpenAPI/Swagger integration
+**Print-Friendly CSS**
+- Hide nav/sidebar when printing
+- Optimize layout for paper
+- Clean page breaks
 
-### Performance & Scale
-- Document caching layer
-- Lazy loading for large docs
-- CDN support for assets
-- Full-text search with Elasticsearch
-- Multi-repository support
+**Anchor Links**
+- Clickable headings with permalink
+- Copy link button on hover
+- Scroll to anchor on page load
+
+**Auto-Refresh Notifications**
+- Poll `/api/commit` for changes
+- Toast when docs are outdated
+- One-click refresh
+
+**Code Block Enhancements**
+- Line numbers (toggle-able)
+- Diff rendering (```diff blocks)
+- Highlight specific lines
+- Copy individual lines
+
+**Broken Link Checker**
+- Scan docs for 404s
+- Warn about orphaned pages
+- Find TODO/FIXME in docs
+
+**Sitemap Generation**
+- Generate sitemap.xml for SEO
+- Auto-update on doc changes
+
+---
+
+### 🟠 Medium-Hard (Bigger Features)
+
+**Document History Viewer**
+- Show git log per file
+- See who changed what
+- Diff between versions
+
+**Version/Branch Switcher**
+- Dropdown to switch branches (main, dev)
+- View different version tags
+- Fetch and cache multiple branches
+
+**Metrics & Analytics**
+- Track page views, popular docs
+- Search analytics
+- Privacy-friendly (no tracking)
+
+---
+
+### 🔴 Hard (Major Work)
+
+**Versioned URLs**
+- `/docs/v0.3.0/guide/` vs `/docs/latest/guide/`
+- Routing architecture change
+- Permanent version links
+
+**PDF Export**
+- Export single doc or whole site
+- Requires PDF generation library
+- Complex formatting
+
+**Multi-Repository Support**
+- Clone multiple git repos
+- Namespace by repo
+- Switch between doc sources
+- Major architecture change
 
 ---
 

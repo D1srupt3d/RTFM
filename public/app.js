@@ -84,6 +84,14 @@ function applyConfig() {
         }
     }
     
+    // Add version badge
+    if (config.version) {
+        const versionBadge = document.createElement('div');
+        versionBadge.className = 'version-badge';
+        versionBadge.textContent = `v${config.version}`;
+        footer.appendChild(versionBadge);
+    }
+    
     loadCommitInfo();
 }
 
@@ -204,6 +212,7 @@ async function loadDocument(path) {
         fixInternalLinks(path);
         addCopyButtons();
         makeCodeBlocksCollapsible();
+        addEditButton(path);
         // generateTOC(); // TODO: Broken - layout conflicts with content on different screen sizes
         
         if (doc.lastModified) showLastModified(doc.lastModified);
@@ -340,17 +349,97 @@ function setupEventListeners() {
     });
     
     document.addEventListener('keydown', (e) => {
+        // Don't trigger shortcuts when typing in inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            if (e.key === 'Escape') {
+                searchResults.classList.remove('active');
+                searchInput.blur();
+            }
+            return;
+        }
+        
+        // Ctrl+K or Cmd+K: Focus search
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             searchInput.focus();
+            return;
         }
         
+        // /: Focus search (like GitHub)
+        if (e.key === '/') {
+            e.preventDefault();
+            searchInput.focus();
+            return;
+        }
+        
+        // Escape: Close search/sidebar
         if (e.key === 'Escape') {
             searchResults.classList.remove('active');
             searchInput.blur();
             sidebar.classList.remove('mobile-open');
+            return;
+        }
+        
+        // j/k: Navigate between docs
+        if (e.key === 'j' || e.key === 'k') {
+            e.preventDefault();
+            navigateDocs(e.key === 'j' ? 'next' : 'prev');
+            return;
         }
     });
+    
+    // Arrow keys in search results
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const results = searchResults.querySelectorAll('.search-result-item');
+            if (results.length === 0) return;
+            
+            const active = searchResults.querySelector('.search-result-item.active');
+            let nextIndex = 0;
+            
+            if (active) {
+                active.classList.remove('active');
+                const currentIndex = Array.from(results).indexOf(active);
+                if (e.key === 'ArrowDown') {
+                    nextIndex = (currentIndex + 1) % results.length;
+                } else {
+                    nextIndex = (currentIndex - 1 + results.length) % results.length;
+                }
+            }
+            
+            results[nextIndex].classList.add('active');
+            results[nextIndex].scrollIntoView({ block: 'nearest' });
+        }
+        
+        if (e.key === 'Enter') {
+            const active = searchResults.querySelector('.search-result-item.active');
+            if (active) {
+                active.click();
+            }
+        }
+    });
+}
+
+function navigateDocs(direction) {
+    // Get all file items from nav tree in order
+    const allFiles = Array.from(document.querySelectorAll('.nav-item.file'));
+    if (allFiles.length === 0) return;
+    
+    const currentIndex = allFiles.findIndex(item => item.classList.contains('active'));
+    if (currentIndex === -1) return;
+    
+    let nextIndex;
+    if (direction === 'next') {
+        nextIndex = (currentIndex + 1) % allFiles.length;
+    } else {
+        nextIndex = (currentIndex - 1 + allFiles.length) % allFiles.length;
+    }
+    
+    const nextDoc = allFiles[nextIndex];
+    if (nextDoc && nextDoc.dataset.path) {
+        loadDocument(nextDoc.dataset.path);
+    }
 }
 
 async function performSearch(query) {
@@ -743,6 +832,33 @@ function addZoomControls(container) {
     });
 }
 
+
+function addEditButton(path) {
+    // Remove existing edit button if present
+    const existing = document.querySelector('.edit-doc-btn');
+    if (existing) existing.remove();
+    
+    // Only add if git repo URL is configured
+    if (!config.git?.repoUrl) return;
+    
+    const docPath = path === 'index' ? 'index.md' : `${path}.md`;
+    const editUrl = `${config.git.repoUrl}/edit/${config.git.editBranch}/${docPath}`;
+    
+    const editButton = document.createElement('a');
+    editButton.href = editUrl;
+    editButton.target = '_blank';
+    editButton.rel = 'noopener noreferrer';
+    editButton.className = 'edit-doc-btn';
+    editButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        Edit this page
+    `;
+    
+    document.getElementById('doc-content').appendChild(editButton);
+}
 
 function loadSyntaxTheme() {
     const savedTheme = localStorage.getItem('siteTheme') || 'dark';

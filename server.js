@@ -11,6 +11,9 @@ const fuzzysort = require('fuzzysort');
 
 const execPromise = util.promisify(exec);
 
+// Read package.json for version
+const packageJson = require('./package.json');
+
 // Dynamic import for marked (ES module) - must be loaded before server starts
 let marked;
 async function initMarked() {
@@ -256,7 +259,9 @@ async function searchDocs(query) {
 app.get('/api/config', (req, res) => {
     res.json({
         site: config.site,
-        links: config.links
+        links: config.links,
+        git: config.git,
+        version: packageJson.version
     });
 });
 

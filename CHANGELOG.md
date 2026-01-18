@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-01-15
+
+### Added
+- **Edit Button** - "Edit this page" link on every doc (opens GitHub/GitLab editor)
+- **Keyboard Navigation** - Power user shortcuts:
+  - `j/k` to navigate between documents
+  - `/` to focus search (like GitHub)
+  - Arrow keys to navigate search results
+  - `Enter` to select search result
+- **Version Badge** - Displays current version in sidebar footer
+- New config options: `GIT_REPO_URL` and `GIT_EDIT_BRANCH` environment variables
+
 ## [0.4.0] - 2026-01-15
 
 ### Added
